@@ -18,6 +18,23 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         
+        // Find navigation buttons
+        val btnRecipes = findViewById<android.widget.Button>(R.id.btn_recipes)
+        val btnFavorites = findViewById<android.widget.Button>(R.id.btn_favorites)
+        
+        // Set click listeners
+        btnRecipes.setOnClickListener {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContainer, CategoriesListFragment())
+                .commit()
+        }
+        
+        btnFavorites.setOnClickListener {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContainer, FavoritesFragment())
+                .commit()
+        }
+        
         // Launch CategoriesListFragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.mainContainer, CategoriesListFragment())
