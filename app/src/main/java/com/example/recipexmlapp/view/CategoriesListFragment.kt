@@ -35,8 +35,8 @@ class CategoriesListFragment : Fragment() {
         val adapter = CategoriesListAdapter(categories)
         
         adapter.setOnItemClickListener(object : CategoriesListAdapter.OnItemClickListener {
-            override fun onItemClick() {
-                openRecipesByCategoryId()
+            override fun onItemClick(categoryId: Int) {
+                openRecipesByCategoryId(categoryId)
             }
         })
         
@@ -45,8 +45,22 @@ class CategoriesListFragment : Fragment() {
         recyclerView.adapter = adapter
     }
     
-    private fun openRecipesByCategoryId() {
+    private fun openRecipesByCategoryId(categoryId: Int) {
+        val categories = CategoryRepository.getCategories()
+        val category = categories.find { it.id == categoryId }
+        
+        val categoryName = category?.title ?: ""
+        val categoryImageUrl = category?.imageName ?: ""
+        
+        val bundle = Bundle().apply {
+            putInt(RecipesListFragment.ARG_CATEGORY_ID, categoryId)
+            putString(RecipesListFragment.ARG_CATEGORY_NAME, categoryName)
+            putString(RecipesListFragment.ARG_CATEGORY_IMAGE_URL, categoryImageUrl)
+        }
+        
         val recipesFragment = RecipesListFragment()
+        recipesFragment.arguments = bundle
+        
         parentFragmentManager.beginTransaction()
             .replace(R.id.mainContainer, recipesFragment)
             .addToBackStack(null)
