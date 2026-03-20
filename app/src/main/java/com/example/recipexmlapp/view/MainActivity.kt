@@ -1,10 +1,12 @@
-package com.example.recipexmlapp
+package com.example.recipexmlapp.view
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.recipexmlapp.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,11 +20,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         
-        // Find navigation buttons
-        val btnRecipes = findViewById<android.widget.Button>(R.id.btn_recipes)
-        val btnFavorites = findViewById<android.widget.Button>(R.id.btn_favorites)
+        val btnRecipes = findViewById<Button>(R.id.btn_recipes)
+        val btnFavorites = findViewById<Button>(R.id.btn_favorites)
         
-        // Set click listeners
         btnRecipes.setOnClickListener {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.mainContainer, CategoriesListFragment())
@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
                 .commit()
         }
         
-        // Launch CategoriesListFragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.mainContainer, CategoriesListFragment())
             .commit()
