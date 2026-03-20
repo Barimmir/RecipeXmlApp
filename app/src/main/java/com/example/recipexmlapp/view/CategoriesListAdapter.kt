@@ -12,6 +12,16 @@ import java.io.InputStream
 class CategoriesListAdapter(private val dataSet: List<Category>) : 
     RecyclerView.Adapter<CategoriesListAdapter.ViewHolder>() {
 
+    private var itemClickListener: OnItemClickListener? = null
+
+    interface OnItemClickListener {
+        fun onItemClick()
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        itemClickListener = listener
+    }
+
     class ViewHolder(private val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
         val ivCategory = binding.ivCategory
         val tvCategoryTitle = binding.tvCategoryTitle
@@ -36,6 +46,10 @@ class CategoriesListAdapter(private val dataSet: List<Category>) :
             inputStream.close()
         } catch (e: Exception) {
             Log.e("CategoriesListAdapter", "Error loading image from assets: ${category.imageName}", e)
+        }
+        
+        holder.itemView.setOnClickListener {
+            itemClickListener?.onItemClick()
         }
     }
 

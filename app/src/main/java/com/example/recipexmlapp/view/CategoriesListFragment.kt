@@ -34,9 +34,23 @@ class CategoriesListFragment : Fragment() {
         val categories = CategoryRepository.getCategories()
         val adapter = CategoriesListAdapter(categories)
         
+        adapter.setOnItemClickListener(object : CategoriesListAdapter.OnItemClickListener {
+            override fun onItemClick() {
+                openRecipesByCategoryId()
+            }
+        })
+        
         val recyclerView: RecyclerView = binding.root.findViewById(R.id.rvCategories)
         recyclerView.layoutManager = GridLayoutManager(context, 2)
         recyclerView.adapter = adapter
+    }
+    
+    private fun openRecipesByCategoryId() {
+        val recipesFragment = RecipesListFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.mainContainer, recipesFragment)
+            .addToBackStack(null)
+            .commit()
     }
     
     override fun onDestroyView() {
