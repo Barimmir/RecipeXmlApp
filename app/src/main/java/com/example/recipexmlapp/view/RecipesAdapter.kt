@@ -1,0 +1,56 @@
+package com.example.recipexmlapp.view
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.example.recipexmlapp.databinding.ItemRecipeCardBinding
+import com.example.recipexmlapp.model.Recipe
+
+class RecipesAdapter(
+    private var recipes: List<Recipe>,
+    private val onRecipeClick: (Int) -> Unit
+) : RecyclerView.Adapter<RecipesAdapter.RecipeViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
+        val binding = ItemRecipeCardBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return RecipeViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
+        holder.bind(recipes[position])
+    }
+
+    override fun getItemCount(): Int = recipes.size
+
+    inner class RecipeViewHolder(
+        private val binding: ItemRecipeCardBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(recipe: Recipe) {
+            binding.tvRecipeTitle.text = recipe.title
+            
+            // Load image from assets (placeholder implementation)
+            try {
+                val inputStream = binding.root.context.assets.open(recipe.imageUrl)
+                val drawable = android.graphics.drawable.Drawable.createFromStream(inputStream, null)
+                binding.ivRecipeImage.setImageDrawable(drawable)
+            } catch (e: Exception) {
+                // Set placeholder if image not found
+                binding.ivRecipeImage.setImageResource(android.R.drawable.ic_menu_gallery)
+            }
+
+            binding.root.setOnClickListener {
+                onRecipeClick(recipe.id)
+            }
+        }
+    }
+
+    fun updateRecipes(newRecipes: List<Recipe>) {
+        recipes = newRecipes
+        notifyDataSetChanged()
+    }
+}
