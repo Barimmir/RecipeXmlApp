@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.recipexmlapp.STUB
 import com.example.recipexmlapp.databinding.FragmentRecipesListBinding
 
 class RecipesListFragment : Fragment() {
@@ -15,6 +17,8 @@ class RecipesListFragment : Fragment() {
     private var categoryId: Int? = null
     private var categoryName: String? = null
     private var categoryImageUrl: String? = null
+    
+    private lateinit var recipesAdapter: RecipesAdapter
     
     companion object {
         const val ARG_CATEGORY_ID = "ARG_CATEGORY_ID"
@@ -37,6 +41,52 @@ class RecipesListFragment : Fragment() {
         categoryId = arguments?.getInt(ARG_CATEGORY_ID)
         categoryName = arguments?.getString(ARG_CATEGORY_NAME)
         categoryImageUrl = arguments?.getString(ARG_CATEGORY_IMAGE_URL)
+        
+        setupHeader()
+        setupRecyclerView()
+        loadRecipes()
+    }
+    
+    private fun setupHeader() {
+        binding.tvCategoryName.text = categoryName ?: "Category"
+        
+        // Load category image from assets
+        categoryImageUrl?.let { imageUrl ->
+            try {
+                val inputStream = requireContext().assets.open(imageUrl)
+                val drawable = android.graphics.drawable.Drawable.createFromStream(inputStream, null)
+                binding.ivCategoryImage.setImageDrawable(drawable)
+            } catch (e: Exception) {
+                // Set placeholder if image not found
+                binding.ivCategoryImage.setImageResource(android.R.drawable.ic_menu_gallery)
+            }
+        }
+    }
+    
+    private fun setupRecyclerView() {
+        recipesAdapter = RecipesAdapter(emptyList()) { recipeId ->
+            openRecipeByRecipeId(recipeId)
+        }
+        
+        binding.rvRecipes.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = recipesAdapter
+        }
+    }
+    
+    private fun loadRecipes() {
+        categoryId?.let { id ->
+            val recipes = STUB.getRecipesByCategoryId(id)
+            recipesAdapter.updateRecipes(recipes)
+        }
+    }
+    
+    private fun openRecipeByRecipeId(recipeId: Int) {
+        // Navigate to RecipeFragment
+        val recipeFragment = RecipeFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(com.example.recipexmlapp.R.id.mainContainer, recipeFragment)
+            .commit()
     }
     
     override fun onDestroyView() {
