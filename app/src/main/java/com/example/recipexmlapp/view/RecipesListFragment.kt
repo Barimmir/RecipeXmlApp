@@ -82,11 +82,18 @@ class RecipesListFragment : Fragment() {
     }
     
     private fun openRecipeByRecipeId(recipeId: Int) {
-        // Navigate to RecipeFragment
-        val recipeFragment = RecipeFragment()
-        parentFragmentManager.beginTransaction()
-            .replace(com.example.recipexmlapp.R.id.mainContainer, recipeFragment)
-            .commit()
+        val recipe = STUB.getRecipeById(recipeId)
+        recipe?.let {
+            val bundle = Bundle()
+            bundle.putParcelable("ARG_RECIPE", it)
+            
+            val recipeFragment = RecipeFragment()
+            recipeFragment.arguments = bundle
+            
+            parentFragmentManager.beginTransaction()
+                .replace(com.example.recipexmlapp.R.id.mainContainer, recipeFragment)
+                .commit()
+        }
     }
     
     override fun onDestroyView() {
