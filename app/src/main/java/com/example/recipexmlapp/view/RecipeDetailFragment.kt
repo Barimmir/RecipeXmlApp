@@ -92,7 +92,7 @@ class RecipeDetailFragment : Fragment() {
         fun newInstance(recipe: Recipe): RecipeDetailFragment {
             return RecipeDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable("recipe", recipe as android.os.Parcelable)
+                    putParcelable("recipe", recipe)
                 }
             }
         }
