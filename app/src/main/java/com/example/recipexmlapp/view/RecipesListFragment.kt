@@ -51,14 +51,12 @@ class RecipesListFragment : Fragment() {
     private fun setupHeader() {
         binding.tvCategoryName.text = categoryName ?: "Category"
         
-        // Load category image from assets
         categoryImageUrl?.let { imageUrl ->
             try {
                 val inputStream = requireContext().assets.open(imageUrl)
                 val drawable = android.graphics.drawable.Drawable.createFromStream(inputStream, null)
                 binding.ivCategoryImage.setImageDrawable(drawable)
             } catch (e: Exception) {
-                // Set placeholder if image not found
                 binding.ivCategoryImage.setImageResource(android.R.drawable.ic_menu_gallery)
             }
         }

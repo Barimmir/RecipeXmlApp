@@ -33,13 +33,11 @@ class RecipesAdapter(
         fun bind(recipe: Recipe) {
             binding.tvRecipeTitle.text = recipe.title
             
-            // Load image from assets (placeholder implementation)
             try {
                 val inputStream = binding.root.context.assets.open(recipe.imageUrl)
                 val drawable = android.graphics.drawable.Drawable.createFromStream(inputStream, null)
                 binding.ivRecipeImage.setImageDrawable(drawable)
             } catch (e: Exception) {
-                // Set placeholder if image not found
                 binding.ivRecipeImage.setImageResource(android.R.drawable.ic_menu_gallery)
             }
 

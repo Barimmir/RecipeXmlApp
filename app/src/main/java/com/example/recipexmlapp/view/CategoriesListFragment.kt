@@ -62,7 +62,7 @@ class CategoriesListFragment : Fragment() {
         recipesFragment.arguments = bundle
         
         parentFragmentManager.beginTransaction()
-            .replace(R.id.mainContainer, recipesFragment)
+            .replace(com.example.recipexmlapp.R.id.mainContainer, recipesFragment)
             .addToBackStack(null)
             .commit()
     }
