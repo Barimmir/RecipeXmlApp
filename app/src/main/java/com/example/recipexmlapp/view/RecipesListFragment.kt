@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipexmlapp.STUB
 import com.example.recipexmlapp.databinding.FragmentRecipesListBinding
+import com.example.recipexmlapp.view.RecipeDetailFragment
 
 class RecipesListFragment : Fragment() {
     
