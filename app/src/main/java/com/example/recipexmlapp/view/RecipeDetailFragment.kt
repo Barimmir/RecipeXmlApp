@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,8 @@ class RecipeDetailFragment : Fragment() {
     private lateinit var recipe: Recipe
     private lateinit var ivRecipeImage: ImageView
     private lateinit var tvRecipeTitle: TextView
+    private lateinit var tvPortions: TextView
+    private lateinit var seekBarPortions: SeekBar
     private lateinit var rvIngredients: RecyclerView
     private lateinit var rvMethod: RecyclerView
     private lateinit var ingredientsAdapter: IngredientsAdapter
@@ -55,6 +58,8 @@ class RecipeDetailFragment : Fragment() {
     private fun initUI(view: View) {
         ivRecipeImage = view.findViewById(R.id.ivRecipeImage)
         tvRecipeTitle = view.findViewById(R.id.tvRecipeTitle)
+        tvPortions = view.findViewById(R.id.tvPortions)
+        seekBarPortions = view.findViewById(R.id.seekBarPortions)
         
         tvRecipeTitle.text = recipe.title.replaceFirstChar { 
             if (it.isLowerCase()) it.titlecase() else it.toString() 
@@ -86,6 +91,18 @@ class RecipeDetailFragment : Fragment() {
 
         val methodDivider = MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
         rvMethod.addItemDecoration(methodDivider)
+
+        seekBarPortions.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val portions = progress + 1
+                tvPortions.text = portions.toString()
+                ingredientsAdapter.updateIngredients(portions)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
     }
 
     companion object {
