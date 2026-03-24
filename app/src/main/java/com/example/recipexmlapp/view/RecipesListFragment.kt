@@ -50,14 +50,12 @@ class RecipesListFragment : Fragment() {
     private fun setupHeader() {
         binding.tvCategoryName.text = categoryName ?: "Category"
         
-        // Load category image from assets
         categoryImageUrl?.let { imageUrl ->
             try {
                 val inputStream = requireContext().assets.open(imageUrl)
                 val drawable = android.graphics.drawable.Drawable.createFromStream(inputStream, null)
                 binding.ivCategoryImage.setImageDrawable(drawable)
             } catch (e: Exception) {
-                // Set placeholder if image not found
                 binding.ivCategoryImage.setImageResource(android.R.drawable.ic_menu_gallery)
             }
         }
@@ -84,14 +82,10 @@ class RecipesListFragment : Fragment() {
     private fun openRecipeByRecipeId(recipeId: Int) {
         val recipe = STUB.getRecipeById(recipeId)
         recipe?.let {
-            val bundle = Bundle()
-            bundle.putParcelable("ARG_RECIPE", it)
-            
-            val recipeFragment = RecipeFragment()
-            recipeFragment.arguments = bundle
+            val recipeDetailFragment = RecipeDetailFragment.newInstance(it)
             
             parentFragmentManager.beginTransaction()
-                .replace(com.example.recipexmlapp.R.id.mainContainer, recipeFragment)
+                .replace(com.example.recipexmlapp.R.id.mainContainer, recipeDetailFragment)
                 .commit()
         }
     }
