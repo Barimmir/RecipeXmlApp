@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipexmlapp.STUB
 import com.example.recipexmlapp.databinding.FragmentRecipesListBinding
+import com.example.recipexmlapp.view.RecipeDetailFragment
 
 class RecipesListFragment : Fragment() {
     
@@ -82,11 +83,14 @@ class RecipesListFragment : Fragment() {
     }
     
     private fun openRecipeByRecipeId(recipeId: Int) {
-        // Navigate to RecipeFragment
-        val recipeFragment = RecipeFragment()
-        parentFragmentManager.beginTransaction()
-            .replace(com.example.recipexmlapp.R.id.mainContainer, recipeFragment)
-            .commit()
+        val recipe = STUB.getRecipeById(recipeId)
+        recipe?.let {
+            val recipeDetailFragment = RecipeDetailFragment.newInstance(it)
+            
+            parentFragmentManager.beginTransaction()
+                .replace(com.example.recipexmlapp.R.id.mainContainer, recipeDetailFragment)
+                .commit()
+        }
     }
     
     override fun onDestroyView() {
