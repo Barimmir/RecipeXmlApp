@@ -13,6 +13,7 @@ import com.example.recipexmlapp.R
 import com.example.recipexmlapp.adapter.IngredientsAdapter
 import com.example.recipexmlapp.adapter.MethodAdapter
 import com.example.recipexmlapp.model.Recipe
+import android.os.Build
 import com.google.android.material.divider.MaterialDividerItemDecoration
 
 class RecipeDetailFragment : Fragment() {
@@ -28,7 +29,12 @@ class RecipeDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            recipe = it.getParcelable("recipe") ?: throw IllegalArgumentException("Recipe argument is required")
+            recipe = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                it.getParcelable("recipe", Recipe::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                it.getParcelable("recipe")
+            } ?: throw IllegalArgumentException("Recipe argument is required")
         }
     }
 
@@ -86,7 +92,7 @@ class RecipeDetailFragment : Fragment() {
         fun newInstance(recipe: Recipe): RecipeDetailFragment {
             return RecipeDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable("recipe", recipe)
+                    putParcelable("recipe", recipe as android.os.Parcelable)
                 }
             }
         }
