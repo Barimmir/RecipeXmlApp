@@ -15,6 +15,8 @@ import com.example.recipexmlapp.adapter.IngredientsAdapter
 import com.example.recipexmlapp.adapter.MethodAdapter
 import com.example.recipexmlapp.model.Recipe
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import com.google.android.material.divider.MaterialDividerItemDecoration
 
 class RecipeDetailFragment : Fragment() {
@@ -28,6 +30,8 @@ class RecipeDetailFragment : Fragment() {
     private lateinit var rvMethod: RecyclerView
     private lateinit var ingredientsAdapter: IngredientsAdapter
     private lateinit var methodAdapter: MethodAdapter
+    private val handler = Handler(Looper.getMainLooper())
+    private var updateRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +73,7 @@ class RecipeDetailFragment : Fragment() {
             val inputStream = requireContext().assets.open(recipe.imageUrl)
             val drawable = android.graphics.drawable.Drawable.createFromStream(inputStream, null)
             ivRecipeImage.setImageDrawable(drawable)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             ivRecipeImage.setImageResource(android.R.drawable.ic_menu_gallery)
         }
     }
@@ -96,10 +100,19 @@ class RecipeDetailFragment : Fragment() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val portions = progress + 1
                 tvPortions.text = portions.toString()
-                ingredientsAdapter.updateIngredients(portions)
+                
+                updateRunnable?.let { handler.removeCallbacks(it) }
+                
+                updateRunnable = Runnable {
+                    ingredientsAdapter.updateIngredients(portions)
+                }
+                
+                handler.postDelayed(updateRunnable!!, 300)
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                updateRunnable?.let { handler.removeCallbacks(it) }
+            }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })

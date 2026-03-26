@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground"
-    tools:context=".FavoritesFragment">
+    android:background="@color/background_gray"
+    tools:context=".view.FavoritesFragment">
 
     <ImageView
         android:id="@+id/iv_header"
         android:layout_width="0dp"
         android:layout_height="200dp"
+        android:contentDescription="@string/content_description_recipe"
         android:src="@drawable/bcg_favorites"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,7 +26,7 @@
         android:layout_marginBottom="16dp"
         android:paddingHorizontal="12dp"
         android:paddingVertical="6dp"
-        android:text="ИЗБРАННОЕ"
+        android:text="@string/favorites"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"

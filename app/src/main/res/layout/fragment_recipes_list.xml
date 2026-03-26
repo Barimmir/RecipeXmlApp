@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:attr/colorBackground"
+    android:background="@color/background_gray"
     tools:context=".view.RecipesListFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,6 +16,7 @@
             android:id="@+id/ivCategoryImage"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:contentDescription="@string/content_description_category"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

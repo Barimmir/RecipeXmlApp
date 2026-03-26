@@ -30,7 +30,8 @@ class IngredientsAdapter(private val ingredients: List<Ingredient>) : RecyclerVi
     override fun getItemCount(): Int = ingredients.size
 
     class IngredientViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvIngredient: TextView = itemView.findViewById(R.id.tvIngredient)
+        private val tvIngredientName: TextView = itemView.findViewById(R.id.tvIngredientName)
+        private val tvIngredientQuantity: TextView = itemView.findViewById(R.id.tvIngredientQuantity)
 
         fun bind(ingredient: Ingredient, quantity: Int) {
             val originalQuantity = ingredient.quantity.toDoubleOrNull() ?: 0.0
@@ -40,8 +41,10 @@ class IngredientsAdapter(private val ingredients: List<Ingredient>) : RecyclerVi
             } else {
                 String.format(Locale.getDefault(), "%.1f", multipliedQuantity)
             }
-            val ingredientText = "$formattedQuantity ${ingredient.unitOfMeasure} ${ingredient.description}"
-            tvIngredient.text = ingredientText.trim()
+            tvIngredientName.text = ingredient.description.replaceFirstChar { 
+                if (it.isLowerCase()) it.titlecase() else it.toString() 
+            }
+            tvIngredientQuantity.text = itemView.context.getString(R.string.ingredient_quantity_format, formattedQuantity, ingredient.unitOfMeasure).trim()
         }
     }
 }
