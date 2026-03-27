@@ -70,7 +70,15 @@ class FavoritesFragment : Fragment() {
         val favoriteIds = getFavorites()
         val favoriteIdsInt = favoriteIds.mapNotNull { it.toIntOrNull() }.toSet()
         val favoriteRecipes = STUB.getRecipesByIds(favoriteIdsInt)
-        recipesAdapter.updateRecipes(favoriteRecipes)
+        
+        if (favoriteRecipes.isEmpty()) {
+            binding.rvFavorites.visibility = View.GONE
+            binding.tvEmptyState.visibility = View.VISIBLE
+        } else {
+            binding.rvFavorites.visibility = View.VISIBLE
+            binding.tvEmptyState.visibility = View.GONE
+            recipesAdapter.updateRecipes(favoriteRecipes)
+        }
     }
     
     override fun onDestroyView() {
