@@ -21,7 +21,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import com.google.android.material.divider.MaterialDividerItemDecoration
-import android.content.SharedPreferences
 
 class RecipeDetailFragment : Fragment() {
 
@@ -50,7 +49,7 @@ class RecipeDetailFragment : Fragment() {
     private lateinit var methodAdapter: MethodAdapter
     private val handler = Handler(Looper.getMainLooper())
     private var updateRunnable: Runnable? = null
-    private lateinit var sharedPrefs: SharedPreferences
+    private val sharedPrefs by lazy { requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -145,14 +144,12 @@ class RecipeDetailFragment : Fragment() {
     }
 
     private fun saveFavorites(favorites: Set<String>) {
-        sharedPrefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         sharedPrefs.edit()
             .putStringSet(FAVORITES_KEY, favorites)
             .apply()
     }
 
     private fun getFavorites(): MutableSet<String> {
-        sharedPrefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val savedFavorites: Set<String>? = sharedPrefs.getStringSet(FAVORITES_KEY, emptySet())
         return HashSet(savedFavorites ?: emptySet())
     }
