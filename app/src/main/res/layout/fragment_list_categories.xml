@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:attr/colorBackground"
-    tools:context=".CategoriesListFragment">
+    android:background="@color/background_gray"
+    tools:context=".view.CategoriesListFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,6 +16,7 @@
             android:id="@+id/iv_header"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:contentDescription="@string/content_description_category"
             android:src="@drawable/bcg_categories"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +31,7 @@
             android:layout_marginBottom="16dp"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
-            android:text="Категории"
+            android:text="@string/categories"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="?android:attr/textColorPrimary"

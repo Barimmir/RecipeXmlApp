@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">RecipeXmlApp</string>
+    <string name="categories">Категории</string>
+    <string name="favorites">ИЗБРАННОЕ</string>
+    <string name="ingredients">Ингредиенты</string>
+    <string name="cooking_method">Способ приготовления</string>
+    <string name="portions">Порции:</string>
+    <string name="content_description_header">Заголовок экрана</string>
+    <string name="content_description_category">Изображение категории</string>
+    <string name="content_description_recipe">Изображение рецепта</string>
+    <string name="ingredient_quantity_format">%s %s</string>
 </resources>
