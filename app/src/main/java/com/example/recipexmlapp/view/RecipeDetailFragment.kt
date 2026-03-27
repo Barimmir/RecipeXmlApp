@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.SeekBar
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +27,7 @@ class RecipeDetailFragment : Fragment() {
     private lateinit var tvRecipeTitle: TextView
     private lateinit var tvPortions: TextView
     private lateinit var seekBarPortions: SeekBar
+    private lateinit var ibFavorite: ImageButton
     private lateinit var rvIngredients: RecyclerView
     private lateinit var rvMethod: RecyclerView
     private lateinit var ingredientsAdapter: IngredientsAdapter
@@ -64,6 +66,7 @@ class RecipeDetailFragment : Fragment() {
         tvRecipeTitle = view.findViewById(R.id.tvRecipeTitle)
         tvPortions = view.findViewById(R.id.tvPortions)
         seekBarPortions = view.findViewById(R.id.seekBarPortions)
+        ibFavorite = view.findViewById(R.id.ibFavorite)
         
         tvRecipeTitle.text = recipe.title.replaceFirstChar { 
             if (it.isLowerCase()) it.titlecase() else it.toString() 
@@ -75,6 +78,10 @@ class RecipeDetailFragment : Fragment() {
             ivRecipeImage.setImageDrawable(drawable)
         } catch (_: Exception) {
             ivRecipeImage.setImageResource(android.R.drawable.ic_menu_gallery)
+        }
+        
+        ibFavorite.setOnClickListener {
+            ibFavorite.setImageResource(R.drawable.ic_heart)
         }
     }
 
