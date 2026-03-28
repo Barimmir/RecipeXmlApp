@@ -1,4 +1,4 @@
-package com.example.recipexmlapp.view
+package com.example.recipexmlapp.ui.recipes.favorites
 
 import android.content.Context
 import android.os.Bundle
@@ -7,8 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.recipexmlapp.STUB
+import com.example.recipexmlapp.R
+import com.example.recipexmlapp.model.STUB
 import com.example.recipexmlapp.databinding.FragmentFavoritesBinding
+import com.example.recipexmlapp.ui.recipes.recipe.RecipeDetailFragment
+import com.example.recipexmlapp.ui.recipes.recipelist.RecipesAdapter
 
 class FavoritesFragment : Fragment() {
     
@@ -58,10 +61,10 @@ class FavoritesFragment : Fragment() {
     private fun openRecipeByRecipeId(recipeId: Int) {
         val recipe = STUB.getRecipeById(recipeId)
         recipe?.let {
-            val recipeDetailFragment = RecipeDetailFragment.newInstance(it)
+            val recipeDetailFragment = RecipeDetailFragment.Companion.newInstance(it)
             
             parentFragmentManager.beginTransaction()
-                .replace(com.example.recipexmlapp.R.id.mainContainer, recipeDetailFragment)
+                .replace(R.id.mainContainer, recipeDetailFragment)
                 .commit()
         }
     }

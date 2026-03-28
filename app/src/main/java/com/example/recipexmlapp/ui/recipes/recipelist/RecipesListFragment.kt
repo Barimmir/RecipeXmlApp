@@ -1,13 +1,16 @@
-package com.example.recipexmlapp.view
+package com.example.recipexmlapp.ui.recipes.recipelist
 
+import android.R
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.recipexmlapp.STUB
+import com.example.recipexmlapp.model.STUB
 import com.example.recipexmlapp.databinding.FragmentRecipesListBinding
+import com.example.recipexmlapp.ui.recipes.recipe.RecipeDetailFragment
 
 class RecipesListFragment : Fragment() {
 
@@ -54,10 +57,10 @@ class RecipesListFragment : Fragment() {
             try {
                 val inputStream = requireContext().assets.open(imageUrl)
                 val drawable =
-                    android.graphics.drawable.Drawable.createFromStream(inputStream, null)
+                    Drawable.createFromStream(inputStream, null)
                 binding.ivCategoryImage.setImageDrawable(drawable)
             } catch (_: Exception) {
-                binding.ivCategoryImage.setImageResource(android.R.drawable.ic_menu_gallery)
+                binding.ivCategoryImage.setImageResource(R.drawable.ic_menu_gallery)
             }
         }
     }

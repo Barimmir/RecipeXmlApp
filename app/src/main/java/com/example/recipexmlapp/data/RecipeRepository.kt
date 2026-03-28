@@ -1,4 +1,5 @@
-package com.example.recipexmlapp.model
+package com.example.recipexmlapp.data
+
 
 object RecipeRepository {
     fun getRecipes(): List<Recipe> {
@@ -48,7 +49,7 @@ object RecipeRepository {
             )
         )
     }
-    
+
     fun getRecipesByCategory(categoryId: Int): List<Recipe> {
         return if (categoryId == 0) {
             getRecipes()

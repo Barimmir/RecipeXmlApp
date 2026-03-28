@@ -1,4 +1,4 @@
-package com.example.recipexmlapp.view
+package com.example.recipexmlapp.ui.recipes.recipe
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -16,11 +16,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.R
 import com.example.recipexmlapp.adapter.IngredientsAdapter
 import com.example.recipexmlapp.adapter.MethodAdapter
-import com.example.recipexmlapp.model.Recipe
-import android.os.Build
+import com.example.recipexmlapp.data.Recipe
 import android.os.Handler
 import android.os.Looper
 import com.google.android.material.divider.MaterialDividerItemDecoration
+import androidx.core.os.BundleCompat
 
 class RecipeDetailFragment : Fragment() {
 
@@ -54,11 +54,8 @@ class RecipeDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            recipe = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelable("recipe", Recipe::class.java)
-            } else {
-                it.getParcelable("recipe")
-            } ?: throw IllegalArgumentException("Recipe argument is required")
+            recipe = BundleCompat.getParcelable(it, "recipe", Recipe::class.java)
+                ?: throw IllegalArgumentException("Recipe argument is required")
         }
     }
 

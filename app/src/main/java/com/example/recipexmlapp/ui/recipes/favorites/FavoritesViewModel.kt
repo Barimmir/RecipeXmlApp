@@ -1,6 +1,6 @@
 package com.example.recipexmlapp.ui.recipes.favorites
 
-import com.example.recipexmlapp.model.Recipe
+import com.example.recipexmlapp.data.Recipe
 import androidx.lifecycle.ViewModel
 
 data class FavoritesState(
