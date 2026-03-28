@@ -1,7 +1,5 @@
-package com.example.recipexmlapp.model
+package com.example.recipexmlapp.data
 
-import com.example.recipexmlapp.data.Ingredient
-import com.example.recipexmlapp.data.Recipe
 
 object RecipeRepository {
     fun getRecipes(): List<Recipe> {
@@ -51,7 +49,7 @@ object RecipeRepository {
             )
         )
     }
-    
+
     fun getRecipesByCategory(categoryId: Int): List<Recipe> {
         return if (categoryId == 0) {
             getRecipes()
