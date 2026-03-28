@@ -8,24 +8,25 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipexmlapp.STUB
 import com.example.recipexmlapp.databinding.FragmentRecipesListBinding
+import com.example.recipexmlapp.view.RecipeDetailFragment
 
 class RecipesListFragment : Fragment() {
-
+    
     private var _binding: FragmentRecipesListBinding? = null
     private val binding get() = _binding!!
-
+    
     private var categoryId: Int? = null
     private var categoryName: String? = null
     private var categoryImageUrl: String? = null
-
+    
     private lateinit var recipesAdapter: RecipesAdapter
-
+    
     companion object {
         const val ARG_CATEGORY_ID = "ARG_CATEGORY_ID"
         const val ARG_CATEGORY_NAME = "ARG_CATEGORY_NAME"
         const val ARG_CATEGORY_IMAGE_URL = "ARG_CATEGORY_IMAGE_URL"
     }
-
+    
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,63 +35,62 @@ class RecipesListFragment : Fragment() {
         _binding = FragmentRecipesListBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        
         categoryId = arguments?.getInt(ARG_CATEGORY_ID)
         categoryName = arguments?.getString(ARG_CATEGORY_NAME)
         categoryImageUrl = arguments?.getString(ARG_CATEGORY_IMAGE_URL)
-
+        
         setupHeader()
         setupRecyclerView()
         loadRecipes()
     }
-
+    
     private fun setupHeader() {
         binding.tvCategoryName.text = categoryName ?: "Category"
-
+        
         categoryImageUrl?.let { imageUrl ->
             try {
                 val inputStream = requireContext().assets.open(imageUrl)
-                val drawable =
-                    android.graphics.drawable.Drawable.createFromStream(inputStream, null)
+                val drawable = android.graphics.drawable.Drawable.createFromStream(inputStream, null)
                 binding.ivCategoryImage.setImageDrawable(drawable)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 binding.ivCategoryImage.setImageResource(android.R.drawable.ic_menu_gallery)
             }
         }
     }
-
+    
     private fun setupRecyclerView() {
         recipesAdapter = RecipesAdapter(emptyList()) { recipeId ->
             openRecipeByRecipeId(recipeId)
         }
-
+        
         binding.rvRecipes.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = recipesAdapter
         }
     }
-
+    
     private fun loadRecipes() {
         categoryId?.let { id ->
             val recipes = STUB.getRecipesByCategoryId(id)
             recipesAdapter.updateRecipes(recipes)
         }
     }
-
+    
     private fun openRecipeByRecipeId(recipeId: Int) {
         val recipe = STUB.getRecipeById(recipeId)
         recipe?.let {
             val recipeDetailFragment = RecipeDetailFragment.newInstance(it)
-
+            
             parentFragmentManager.beginTransaction()
                 .replace(com.example.recipexmlapp.R.id.mainContainer, recipeDetailFragment)
                 .commit()
         }
     }
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

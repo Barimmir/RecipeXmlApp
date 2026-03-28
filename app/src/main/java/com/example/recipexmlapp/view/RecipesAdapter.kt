@@ -37,7 +37,7 @@ class RecipesAdapter(
                 val inputStream = binding.root.context.assets.open(recipe.imageUrl)
                 val drawable = android.graphics.drawable.Drawable.createFromStream(inputStream, null)
                 binding.ivRecipeImage.setImageDrawable(drawable)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 binding.ivRecipeImage.setImageResource(android.R.drawable.ic_menu_gallery)
             }
 
