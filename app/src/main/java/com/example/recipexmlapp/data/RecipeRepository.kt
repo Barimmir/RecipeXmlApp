@@ -1,5 +1,8 @@
 package com.example.recipexmlapp.model
 
+import com.example.recipexmlapp.data.Ingredient
+import com.example.recipexmlapp.data.Recipe
+
 object RecipeRepository {
     fun getRecipes(): List<Recipe> {
         return listOf(

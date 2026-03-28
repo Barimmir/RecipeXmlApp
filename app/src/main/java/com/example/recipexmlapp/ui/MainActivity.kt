@@ -1,4 +1,4 @@
-package com.example.recipexmlapp.view
+package com.example.recipexmlapp.ui
 
 import android.os.Bundle
 import android.widget.Button
@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.recipexmlapp.R
+import com.example.recipexmlapp.ui.categories.CategoriesListFragment
+import com.example.recipexmlapp.ui.recipes.favorites.FavoritesFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

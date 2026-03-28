@@ -1,7 +1,7 @@
 package com.example.recipexmlapp.ui.recipes.recipelist
 
 import androidx.lifecycle.ViewModel
-import com.example.recipexmlapp.model.Recipe
+import com.example.recipexmlapp.data.Recipe
 
 data class RecipeListState(
     val recipes: List<Recipe> = emptyList(),

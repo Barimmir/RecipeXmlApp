@@ -1,4 +1,4 @@
-package com.example.recipexmlapp.view
+package com.example.recipexmlapp.ui.categories
 
 import android.graphics.drawable.Drawable
 import android.util.Log
@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.databinding.ItemCategoryBinding
-import com.example.recipexmlapp.model.Category
+import com.example.recipexmlapp.data.Category
 import java.io.InputStream
 
 class CategoriesListAdapter(private val dataSet: List<Category>) : 

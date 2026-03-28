@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.R
-import com.example.recipexmlapp.model.Ingredient
+import com.example.recipexmlapp.data.Ingredient
 import java.util.Locale
 
 class IngredientsAdapter(private val ingredients: List<Ingredient>) : RecyclerView.Adapter<IngredientsAdapter.IngredientViewHolder>() {

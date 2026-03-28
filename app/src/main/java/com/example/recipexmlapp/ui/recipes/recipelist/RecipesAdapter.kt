@@ -1,10 +1,12 @@
-package com.example.recipexmlapp.view
+package com.example.recipexmlapp.ui.recipes.recipelist
 
+import android.R
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.databinding.ItemRecipeCardBinding
-import com.example.recipexmlapp.model.Recipe
+import com.example.recipexmlapp.data.Recipe
 
 class RecipesAdapter(
     private var recipes: List<Recipe>,
@@ -32,13 +34,13 @@ class RecipesAdapter(
 
         fun bind(recipe: Recipe) {
             binding.tvRecipeTitle.text = recipe.title
-            
+
             try {
                 val inputStream = binding.root.context.assets.open(recipe.imageUrl)
-                val drawable = android.graphics.drawable.Drawable.createFromStream(inputStream, null)
+                val drawable = Drawable.createFromStream(inputStream, null)
                 binding.ivRecipeImage.setImageDrawable(drawable)
             } catch (_: Exception) {
-                binding.ivRecipeImage.setImageResource(android.R.drawable.ic_menu_gallery)
+                binding.ivRecipeImage.setImageResource(R.drawable.ic_menu_gallery)
             }
 
             binding.root.setOnClickListener {

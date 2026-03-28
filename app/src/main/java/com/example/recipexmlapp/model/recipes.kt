@@ -1,6 +1,6 @@
-package com.example.recipexmlapp
-import com.example.recipexmlapp.model.Recipe
-import com.example.recipexmlapp.model.Ingredient
+package com.example.recipexmlapp.model
+import com.example.recipexmlapp.data.Recipe
+import com.example.recipexmlapp.data.Ingredient
 
 object STUB {
     private val burgerRecipes = listOf(
