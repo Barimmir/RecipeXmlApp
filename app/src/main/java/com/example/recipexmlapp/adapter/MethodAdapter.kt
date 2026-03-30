@@ -7,7 +7,27 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.R
 
-class MethodAdapter(private val methodSteps: List<String>) : RecyclerView.Adapter<MethodAdapter.MethodViewHolder>() {
+class MethodAdapter(private var methodSteps: List<String>) : RecyclerView.Adapter<MethodAdapter.MethodViewHolder>() {
+
+    fun updateMethod(newMethodSteps: List<String>) {
+        val oldSize = methodSteps.size
+        methodSteps = newMethodSteps
+        val newSize = methodSteps.size
+        
+        when {
+            oldSize == 0 -> notifyItemRangeInserted(0, newSize)
+            newSize == 0 -> notifyItemRangeRemoved(0, oldSize)
+            else -> {
+                if (oldSize < newSize) {
+                    notifyItemRangeChanged(0, oldSize)
+                    notifyItemRangeInserted(oldSize, newSize - oldSize)
+                } else {
+                    notifyItemRangeChanged(0, newSize)
+                    notifyItemRangeRemoved(newSize, oldSize - newSize)
+                }
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MethodViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_method_step, parent, false)
@@ -25,7 +45,7 @@ class MethodAdapter(private val methodSteps: List<String>) : RecyclerView.Adapte
         private val tvStepText: TextView = itemView.findViewById(R.id.tvStepText)
 
         fun bind(stepText: String, stepNumber: Int) {
-            tvStepNumber.text = "$stepNumber."
+            tvStepNumber.text = itemView.context.getString(R.string.step_number_format, stepNumber)
             tvStepText.text = stepText
         }
     }

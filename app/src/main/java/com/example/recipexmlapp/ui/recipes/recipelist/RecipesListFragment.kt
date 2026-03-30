@@ -1,6 +1,5 @@
 package com.example.recipexmlapp.ui.recipes.recipelist
 
-import android.R
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -60,7 +59,7 @@ class RecipesListFragment : Fragment() {
                     Drawable.createFromStream(inputStream, null)
                 binding.ivCategoryImage.setImageDrawable(drawable)
             } catch (_: Exception) {
-                binding.ivCategoryImage.setImageResource(R.drawable.ic_menu_gallery)
+                binding.ivCategoryImage.setImageResource(android.R.drawable.ic_menu_gallery)
             }
         }
     }
@@ -84,14 +83,11 @@ class RecipesListFragment : Fragment() {
     }
 
     private fun openRecipeByRecipeId(recipeId: Int) {
-        val recipe = STUB.getRecipeById(recipeId)
-        recipe?.let {
-            val recipeDetailFragment = RecipeDetailFragment.newInstance(it)
+        val recipeDetailFragment = RecipeDetailFragment.newInstance(recipeId)
 
-            parentFragmentManager.beginTransaction()
-                .replace(com.example.recipexmlapp.R.id.mainContainer, recipeDetailFragment)
-                .commit()
-        }
+        parentFragmentManager.beginTransaction()
+            .replace(com.example.recipexmlapp.R.id.mainContainer, recipeDetailFragment)
+            .commit()
     }
 
     override fun onDestroyView() {
