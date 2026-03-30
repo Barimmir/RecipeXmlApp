@@ -1,6 +1,9 @@
 package com.example.recipexmlapp.ui.recipes.recipe
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import com.example.recipexmlapp.data.Recipe
 
 data class RecipeDetailState(
@@ -13,26 +16,31 @@ data class RecipeDetailState(
 
 class RecipeDetailViewModel : ViewModel() {
     
-    var state = RecipeDetailState()
-        private set
+    private val _state = MutableLiveData<RecipeDetailState>()
+    val state: LiveData<RecipeDetailState> = _state
+    
+    init {
+        Log.d("RecipeDetailVM", "ViewModel initialized")
+        _state.value = RecipeDetailState(isFavorite = true)
+    }
     
     fun setRecipe(recipe: Recipe) {
-        state = state.copy(recipe = recipe)
+        _state.value = _state.value?.copy(recipe = recipe)
     }
     
     fun updatePortions(portions: Int) {
-        state = state.copy(portions = portions)
+        _state.value = _state.value?.copy(portions = portions)
     }
     
     fun toggleFavorite() {
-        state = state.copy(isFavorite = !state.isFavorite)
+        _state.value = _state.value?.copy(isFavorite = !(_state.value?.isFavorite ?: false))
     }
     
     fun setLoading(isLoading: Boolean) {
-        state = state.copy(isLoading = isLoading)
+        _state.value = _state.value?.copy(isLoading = isLoading)
     }
     
     fun setError(error: String?) {
-        state = state.copy(error = error)
+        _state.value = _state.value?.copy(error = error)
     }
 }

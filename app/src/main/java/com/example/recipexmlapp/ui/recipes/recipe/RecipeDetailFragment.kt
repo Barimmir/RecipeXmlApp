@@ -3,6 +3,7 @@ package com.example.recipexmlapp.ui.recipes.recipe
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import android.widget.TextView
 import android.widget.SeekBar
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.R
@@ -37,6 +39,7 @@ class RecipeDetailFragment : Fragment() {
         }
     }
 
+    private val viewModel: RecipeDetailViewModel by viewModels()
     private lateinit var recipe: Recipe
     private lateinit var ivRecipeImage: ImageView
     private lateinit var tvRecipeTitle: TextView
@@ -72,6 +75,12 @@ class RecipeDetailFragment : Fragment() {
         initUI(view)
         initRecycler()
         updateFavoriteIcon()
+        
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            Log.i("!!!", "isFavorite: ${state.isFavorite}")
+        }
+        
+        viewModel.setRecipe(recipe)
     }
 
     private fun initUI(view: View) {
