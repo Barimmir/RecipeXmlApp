@@ -9,6 +9,7 @@ import android.util.Log
 import android.content.Context
 import androidx.core.content.edit
 import android.app.Application
+import android.graphics.drawable.Drawable
 import com.example.recipexmlapp.data.Recipe
 import com.example.recipexmlapp.model.STUB
 
@@ -17,7 +18,8 @@ data class RecipeDetailState(
     val portionsCount: Int = 1,
     val isFavorite: Boolean = false,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val recipeImage: Drawable? = null
 )
 
 class RecipeDetailViewModel(application: Application) : AndroidViewModel(application) {
@@ -44,10 +46,21 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
         val isFavorite = favorites.contains(id.toString())
         val currentPortionsCount = _state.value?.portionsCount ?: 1
         
+        // Загрузка изображения из ассетов
+        val recipeImage = try {
+            val inputStream = getApplication<Application>().assets.open(recipe?.imageUrl ?: "")
+            val drawable = Drawable.createFromStream(inputStream, null)
+            drawable
+        } catch (e: Exception) {
+            Log.e("RecipeDetailVM", "Error loading recipe image", e)
+            null
+        }
+        
         _state.value = _state.value?.copy(
             recipe = recipe,
             isFavorite = isFavorite,
-            portionsCount = currentPortionsCount
+            portionsCount = currentPortionsCount,
+            recipeImage = recipeImage
         )
     }
     
