@@ -1,8 +1,6 @@
 package com.example.recipexmlapp.ui.recipes.recipe
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,8 +42,6 @@ class RecipeDetailFragment : Fragment() {
     private lateinit var rvMethod: RecyclerView
     private lateinit var ingredientsAdapter: IngredientsAdapter
     private lateinit var methodAdapter: MethodAdapter
-    private val handler = Handler(Looper.getMainLooper())
-    private var updateRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +65,6 @@ class RecipeDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.loadRecipe(recipeId)
         initUI(view)
-        initRecycler()
     }
 
     private fun initUI(view: View) {
@@ -78,6 +73,26 @@ class RecipeDetailFragment : Fragment() {
         tvPortions = view.findViewById(R.id.tvPortions)
         seekBarPortions = view.findViewById(R.id.seekBarPortions)
         ibFavorite = view.findViewById(R.id.ibFavorite)
+        rvIngredients = view.findViewById(R.id.rvIngredients)
+        rvMethod = view.findViewById(R.id.rvMethod)
+
+        // Инициализация адаптеров
+        ingredientsAdapter = IngredientsAdapter(emptyList())
+        rvIngredients.adapter = ingredientsAdapter
+        rvIngredients.layoutManager = LinearLayoutManager(requireContext())
+
+        methodAdapter = MethodAdapter(emptyList())
+        rvMethod.adapter = methodAdapter
+        rvMethod.layoutManager = LinearLayoutManager(requireContext())
+
+        // Добавление разделителей
+        val ingredientsDivider =
+            MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        rvIngredients.addItemDecoration(ingredientsDivider)
+
+        val methodDivider =
+            MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        rvMethod.addItemDecoration(methodDivider)
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             state.recipe?.let { recipe ->
@@ -88,7 +103,9 @@ class RecipeDetailFragment : Fragment() {
                 // Установка изображения из стейта
                 ivRecipeImage.setImageDrawable(state.recipeImage)
                 
+                // Обновление адаптеров данными из стейта
                 ingredientsAdapter.updateIngredients(recipe.ingredients)
+                ingredientsAdapter.updatePortions(state.portionsCount)
                 methodAdapter.updateMethod(recipe.method)
             }
             
@@ -105,52 +122,20 @@ class RecipeDetailFragment : Fragment() {
         ibFavorite.setOnClickListener {
             viewModel.onFavoritesClicked()
         }
-    }
 
-    private fun initRecycler() {
-        rvIngredients = requireView().findViewById(R.id.rvIngredients)
-        rvMethod = requireView().findViewById(R.id.rvMethod)
-
-        ingredientsAdapter = IngredientsAdapter(emptyList())
-        rvIngredients.adapter = ingredientsAdapter
-        rvIngredients.layoutManager = LinearLayoutManager(requireContext())
-
-        methodAdapter = MethodAdapter(emptyList())
-        rvMethod.adapter = methodAdapter
-        rvMethod.layoutManager = LinearLayoutManager(requireContext())
-
-        val ingredientsDivider =
-            MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        rvIngredients.addItemDecoration(ingredientsDivider)
-
-        val methodDivider =
-            MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        rvMethod.addItemDecoration(methodDivider)
-
+        // Настройка SeekBar для обновления порций
         seekBarPortions.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     val portions = progress + 1
-                    viewModel.updatePortions(portions)
-
-                    updateRunnable?.let { handler.removeCallbacks(it) }
-
-                    updateRunnable = Runnable {
-                        viewModel.state.value?.recipe?.let { _ ->
-                            ingredientsAdapter.updatePortions(viewModel.state.value?.portionsCount ?: 1)
-                        }
-                    }
-
-                    updateRunnable?.let { handler.postDelayed(it, 300) }
+                    viewModel.updatePortionsCount(portions)
                 }
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                updateRunnable?.let { handler.removeCallbacks(it) }
-            }
-
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
     }
+
 
 }
