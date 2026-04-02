@@ -134,18 +134,20 @@ class RecipeDetailFragment : Fragment() {
 
         seekBarPortions.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val portions = progress + 1
-                viewModel.updatePortions(portions)
+                if (fromUser) {
+                    val portions = progress + 1
+                    viewModel.updatePortions(portions)
 
-                updateRunnable?.let { handler.removeCallbacks(it) }
+                    updateRunnable?.let { handler.removeCallbacks(it) }
 
-                updateRunnable = Runnable {
-                    viewModel.state.value?.recipe?.let { recipe ->
-                        ingredientsAdapter.updatePortions(viewModel.state.value?.portionsCount ?: 1)
+                    updateRunnable = Runnable {
+                        viewModel.state.value?.recipe?.let { recipe ->
+                            ingredientsAdapter.updatePortions(viewModel.state.value?.portionsCount ?: 1)
+                        }
                     }
-                }
 
-                handler.postDelayed(updateRunnable!!, 300)
+                    handler.postDelayed(updateRunnable!!, 300)
+                }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
