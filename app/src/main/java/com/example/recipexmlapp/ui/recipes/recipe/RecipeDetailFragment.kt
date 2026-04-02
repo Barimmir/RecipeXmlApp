@@ -147,7 +147,7 @@ class RecipeDetailFragment : Fragment() {
                         }
                     }
 
-                    handler.postDelayed(updateRunnable!!, 300)
+                    updateRunnable?.let { handler.postDelayed(it, 300) }
                 }
             }
 

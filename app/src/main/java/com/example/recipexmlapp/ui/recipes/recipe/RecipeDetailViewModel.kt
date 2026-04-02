@@ -22,11 +22,13 @@ data class RecipeDetailState(
 
 class RecipeDetailViewModel(application: Application) : AndroidViewModel(application) {
     
+    companion object {
+        private const val PREFS_NAME = "recipe_favorites"
+        private const val FAVORITES_KEY = "favorites_set"
+    }
+    
     private val _state = MutableLiveData<RecipeDetailState>()
     val state: LiveData<RecipeDetailState> = _state
-    
-    private val PREFS_NAME = "recipe_favorites"
-    private val FAVORITES_KEY = "favorites_set"
     
     private val sharedPrefs = getApplication<Application>().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     
