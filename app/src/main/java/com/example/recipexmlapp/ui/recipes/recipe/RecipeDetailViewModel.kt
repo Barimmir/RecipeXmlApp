@@ -28,7 +28,7 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
     private val PREFS_NAME = "recipe_favorites"
     private val FAVORITES_KEY = "favorites_set"
     
-    private val sharedPrefs = application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val sharedPrefs = getApplication<Application>().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     
     init {
         Log.d("RecipeDetailVM", "ViewModel initialized")
