@@ -32,7 +32,9 @@ class RecipeDetailFragment : Fragment() {
         }
     }
 
-    private val viewModel: RecipeDetailViewModel by viewModels()
+    private val viewModel: RecipeDetailViewModel by viewModels {
+        RecipeDetailViewModelFactory(requireActivity().application)
+    }
     private var recipeId: Int = 0
     private lateinit var ivRecipeImage: ImageView
     private lateinit var tvRecipeTitle: TextView
@@ -66,7 +68,6 @@ class RecipeDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.setContext(requireContext())
         viewModel.loadRecipe(recipeId)
         initUI(view)
         initRecycler()

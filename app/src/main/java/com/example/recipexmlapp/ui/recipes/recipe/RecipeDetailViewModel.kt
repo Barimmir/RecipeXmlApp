@@ -1,11 +1,14 @@
 package com.example.recipexmlapp.ui.recipes.recipe
 
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import android.util.Log
 import android.content.Context
 import androidx.core.content.edit
+import android.app.Application
 import com.example.recipexmlapp.data.Recipe
 import com.example.recipexmlapp.model.STUB
 
@@ -17,7 +20,7 @@ data class RecipeDetailState(
     val error: String? = null
 )
 
-class RecipeDetailViewModel : ViewModel() {
+class RecipeDetailViewModel(application: Application) : AndroidViewModel(application) {
     
     private val _state = MutableLiveData<RecipeDetailState>()
     val state: LiveData<RecipeDetailState> = _state
@@ -25,11 +28,7 @@ class RecipeDetailViewModel : ViewModel() {
     private val PREFS_NAME = "recipe_favorites"
     private val FAVORITES_KEY = "favorites_set"
     
-    private var sharedPrefs: android.content.SharedPreferences? = null
-    
-    fun setContext(context: Context) {
-        sharedPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    }
+    private val sharedPrefs = application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     
     init {
         Log.d("RecipeDetailVM", "ViewModel initialized")
@@ -51,12 +50,12 @@ class RecipeDetailViewModel : ViewModel() {
     }
     
     private fun getFavorites(): MutableSet<String> {
-        val savedFavorites: Set<String>? = sharedPrefs?.getStringSet(FAVORITES_KEY, emptySet())
+        val savedFavorites: Set<String>? = sharedPrefs.getStringSet(FAVORITES_KEY, emptySet())
         return HashSet(savedFavorites ?: emptySet())
     }
     
     private fun saveFavorites(favorites: Set<String>) {
-        sharedPrefs?.edit {
+        sharedPrefs.edit {
             putStringSet(FAVORITES_KEY, favorites)
         }
     }
@@ -90,5 +89,15 @@ class RecipeDetailViewModel : ViewModel() {
     
     fun setError(error: String?) {
         _state.value = _state.value?.copy(error = error)
+    }
+}
+
+class RecipeDetailViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(RecipeDetailViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return RecipeDetailViewModel(application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
