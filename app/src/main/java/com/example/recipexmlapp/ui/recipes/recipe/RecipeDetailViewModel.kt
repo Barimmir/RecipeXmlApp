@@ -98,10 +98,6 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
         _state.value = _state.value?.copy(portionsCount = portions)
     }
     
-    fun updatePortionsCount(portions: Int) {
-        _state.value = _state.value?.copy(portionsCount = portions)
-    }
-    
     fun setLoading(isLoading: Boolean) {
         _state.value = _state.value?.copy(isLoading = isLoading)
     }

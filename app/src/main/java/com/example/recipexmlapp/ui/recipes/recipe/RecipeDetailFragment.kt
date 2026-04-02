@@ -128,7 +128,7 @@ class RecipeDetailFragment : Fragment() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     val portions = progress + 1
-                    viewModel.updatePortionsCount(portions)
+                    viewModel.updatePortions(portions)
                 }
             }
 
