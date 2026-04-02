@@ -142,7 +142,7 @@ class RecipeDetailFragment : Fragment() {
                     updateRunnable?.let { handler.removeCallbacks(it) }
 
                     updateRunnable = Runnable {
-                        viewModel.state.value?.recipe?.let { recipe ->
+                        viewModel.state.value?.recipe?.let { _ ->
                             ingredientsAdapter.updatePortions(viewModel.state.value?.portionsCount ?: 1)
                         }
                     }
