@@ -1,6 +1,5 @@
 package com.example.recipexmlapp.ui.recipes.recipe
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -86,13 +85,8 @@ class RecipeDetailFragment : Fragment() {
                     if (it.isLowerCase()) it.titlecase() else it.toString()
                 }
 
-                try {
-                    val inputStream = requireContext().assets.open(recipe.imageUrl)
-                    val drawable = Drawable.createFromStream(inputStream, null)
-                    ivRecipeImage.setImageDrawable(drawable)
-                } catch (_: Exception) {
-                    ivRecipeImage.setImageResource(android.R.drawable.ic_menu_gallery)
-                }
+                // Установка изображения из стейта
+                ivRecipeImage.setImageDrawable(state.recipeImage)
                 
                 ingredientsAdapter.updateIngredients(recipe.ingredients)
                 methodAdapter.updateMethod(recipe.method)
