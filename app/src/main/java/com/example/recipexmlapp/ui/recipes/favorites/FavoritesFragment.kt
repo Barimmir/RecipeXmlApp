@@ -59,14 +59,11 @@ class FavoritesFragment : Fragment() {
     }
     
     private fun openRecipeByRecipeId(recipeId: Int) {
-        val recipe = STUB.getRecipeById(recipeId)
-        recipe?.let {
-            val recipeDetailFragment = RecipeDetailFragment.Companion.newInstance(it)
-            
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.mainContainer, recipeDetailFragment)
-                .commit()
-        }
+        val recipeDetailFragment = RecipeDetailFragment.newInstance(recipeId)
+        
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.mainContainer, recipeDetailFragment)
+            .commit()
     }
     
     private fun loadFavoriteRecipes() {

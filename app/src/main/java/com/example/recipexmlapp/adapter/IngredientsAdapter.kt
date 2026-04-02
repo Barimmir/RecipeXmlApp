@@ -9,11 +9,31 @@ import com.example.recipexmlapp.R
 import com.example.recipexmlapp.data.Ingredient
 import java.util.Locale
 
-class IngredientsAdapter(private val ingredients: List<Ingredient>) : RecyclerView.Adapter<IngredientsAdapter.IngredientViewHolder>() {
+class IngredientsAdapter(private var ingredients: List<Ingredient>) : RecyclerView.Adapter<IngredientsAdapter.IngredientViewHolder>() {
 
     private var quantity = 1
 
-    fun updateIngredients(progress: Int) {
+    fun updateIngredients(newIngredients: List<Ingredient>) {
+        val oldSize = ingredients.size
+        ingredients = newIngredients
+        val newSize = ingredients.size
+        
+        when {
+            oldSize == 0 -> notifyItemRangeInserted(0, newSize)
+            newSize == 0 -> notifyItemRangeRemoved(0, oldSize)
+            else -> {
+                if (oldSize < newSize) {
+                    notifyItemRangeChanged(0, oldSize)
+                    notifyItemRangeInserted(oldSize, newSize - oldSize)
+                } else {
+                    notifyItemRangeChanged(0, newSize)
+                    notifyItemRangeRemoved(newSize, oldSize - newSize)
+                }
+            }
+        }
+    }
+
+    fun updatePortions(progress: Int) {
         quantity = progress
         notifyItemRangeChanged(0, itemCount)
     }
