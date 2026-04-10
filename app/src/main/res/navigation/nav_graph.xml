@@ -27,6 +27,6 @@
         android:id="@+id/favoritesFragment"
         android:name="com.example.recipexmlapp.ui.recipes.favorites.FavoritesFragment"
         android:label="Favorites"
-        tools:layout="@layout/fragment_recipe_detail" />
+        tools:layout="@layout/fragment_favorites" />
 
 </navigation>
