@@ -116,9 +116,9 @@ class RecipeDetailFragment : Fragment() {
                 ivRecipeImage.setImageDrawable(state.recipeImage)
                 
                 // Обновление адаптеров данными из стейта
-                ingredientsAdapter.dataSet = recipe.ingredients
+                ingredientsAdapter.updateIngredients(recipe.ingredients)
                 ingredientsAdapter.updatePortions(state.portionsCount)
-                methodAdapter.dataSet = recipe.method
+                methodAdapter.updateMethod(recipe.method)
             }
             
             tvPortions.text = state.portionsCount.toString()
