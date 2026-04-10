@@ -7,12 +7,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.R
 
-class MethodAdapter(private var methodSteps: List<String>) : RecyclerView.Adapter<MethodAdapter.MethodViewHolder>() {
+class MethodAdapter : RecyclerView.Adapter<MethodAdapter.MethodViewHolder>() {
+
+    var dataSet: List<String> = emptyList()
 
     fun updateMethod(newMethodSteps: List<String>) {
-        val oldSize = methodSteps.size
-        methodSteps = newMethodSteps
-        val newSize = methodSteps.size
+        val oldSize = dataSet.size
+        dataSet = newMethodSteps
+        val newSize = dataSet.size
         
         when {
             oldSize == 0 -> notifyItemRangeInserted(0, newSize)
@@ -35,10 +37,10 @@ class MethodAdapter(private var methodSteps: List<String>) : RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(holder: MethodViewHolder, position: Int) {
-        holder.bind(methodSteps[position], position + 1)
+        holder.bind(dataSet[position], position + 1)
     }
 
-    override fun getItemCount(): Int = methodSteps.size
+    override fun getItemCount(): Int = dataSet.size
 
     class MethodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvStepNumber: TextView = itemView.findViewById(R.id.tvStepNumber)

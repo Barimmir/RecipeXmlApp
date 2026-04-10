@@ -16,6 +16,18 @@ import com.example.recipexmlapp.R
 import com.example.recipexmlapp.adapter.IngredientsAdapter
 import com.example.recipexmlapp.adapter.MethodAdapter
 import com.google.android.material.divider.MaterialDividerItemDecoration
+import android.widget.SeekBar.OnSeekBarChangeListener
+
+class PortionSeekBarListener(val onChangeIngredients: (Int) -> Unit) : OnSeekBarChangeListener {
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        if (fromUser) {
+            onChangeIngredients(progress)
+        }
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+}
 
 class RecipeDetailFragment : Fragment() {
 
@@ -77,11 +89,11 @@ class RecipeDetailFragment : Fragment() {
         rvMethod = view.findViewById(R.id.rvMethod)
 
         // Инициализация адаптеров
-        ingredientsAdapter = IngredientsAdapter(emptyList())
+        ingredientsAdapter = IngredientsAdapter()
         rvIngredients.adapter = ingredientsAdapter
         rvIngredients.layoutManager = LinearLayoutManager(requireContext())
 
-        methodAdapter = MethodAdapter(emptyList())
+        methodAdapter = MethodAdapter()
         rvMethod.adapter = methodAdapter
         rvMethod.layoutManager = LinearLayoutManager(requireContext())
 
@@ -124,16 +136,9 @@ class RecipeDetailFragment : Fragment() {
         }
 
         // Настройка SeekBar для обновления порций
-        seekBarPortions.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    val portions = progress + 1
-                    viewModel.updatePortions(portions)
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        seekBarPortions.setOnSeekBarChangeListener(PortionSeekBarListener { progress ->
+            val portions = progress + 1
+            viewModel.updatePortions(portions)
         })
     }
 
