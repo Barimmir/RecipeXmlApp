@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipexmlapp.R
 import com.example.recipexmlapp.databinding.FragmentFavoritesBinding
@@ -19,7 +20,9 @@ class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
     
-    private val viewModel: FavoritesViewModel by viewModels()
+    private val viewModel: FavoritesViewModel by viewModels {
+        ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+    }
     private lateinit var recipesAdapter: RecipesAdapter
     
     override fun onCreateView(
@@ -37,7 +40,7 @@ class FavoritesFragment : Fragment() {
         initRecyclerView()
         observeViewModel()
         
-        viewModel.initialize(requireContext())
+        viewModel.initialize()
     }
     
     private fun observeViewModel() {

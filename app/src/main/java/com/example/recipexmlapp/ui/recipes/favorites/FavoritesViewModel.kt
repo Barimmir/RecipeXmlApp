@@ -1,7 +1,7 @@
 package com.example.recipexmlapp.ui.recipes.favorites
 
-import android.content.Context
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.recipexmlapp.model.STUB
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,15 +9,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class FavoritesViewModel : ViewModel() {
+class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
     
     private val _state = MutableStateFlow(FavoritesState())
     val state: StateFlow<FavoritesState> = _state.asStateFlow()
     
-    private lateinit var sharedPrefs: android.content.SharedPreferences
+    private val sharedPrefs = application.getSharedPreferences("recipe_favorites", Application.MODE_PRIVATE)
     
-    fun initialize(context: Context) {
-        sharedPrefs = context.getSharedPreferences("recipe_favorites", Context.MODE_PRIVATE)
+    fun initialize() {
         loadFavoriteRecipes()
     }
     
