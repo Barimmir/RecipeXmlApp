@@ -6,20 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.recipexmlapp.model.STUB
 import com.example.recipexmlapp.databinding.FragmentRecipesListBinding
 import com.example.recipexmlapp.ui.recipes.recipe.RecipeDetailFragment
+import kotlinx.coroutines.launch
 
 class RecipesListFragment : Fragment() {
 
     private var _binding: FragmentRecipesListBinding? = null
     private val binding get() = _binding!!
 
-    private var categoryId: Int? = null
-    private var categoryName: String? = null
-    private var categoryImageUrl: String? = null
-
+    private val viewModel: RecipesListViewModel by viewModels()
     private lateinit var recipesAdapter: RecipesAdapter
 
     companion object {
@@ -40,23 +39,45 @@ class RecipesListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        categoryId = arguments?.getInt(ARG_CATEGORY_ID)
-        categoryName = arguments?.getString(ARG_CATEGORY_NAME)
-        categoryImageUrl = arguments?.getString(ARG_CATEGORY_IMAGE_URL)
-
-        setupHeader()
         setupRecyclerView()
-        loadRecipes()
+        observeViewModel()
+        
+        val categoryId = arguments?.getInt(ARG_CATEGORY_ID)
+        val categoryName = arguments?.getString(ARG_CATEGORY_NAME)
+        val categoryImageUrl = arguments?.getString(ARG_CATEGORY_IMAGE_URL)
+        
+        viewModel.initialize(categoryId, categoryName, categoryImageUrl)
     }
 
-    private fun setupHeader() {
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.state.collect { state ->
+                updateUI(state)
+            }
+        }
+    }
+
+    private fun updateUI(state: RecipesListState) {
+        setupHeader(state.categoryName, state.categoryImageUrl)
+        
+        if (state.isLoading) {
+            // Show loading indicator if needed
+        }
+        
+        state.error?.let { error ->
+            // Show error message if needed
+        }
+        
+        recipesAdapter.updateRecipes(state.recipes)
+    }
+
+    private fun setupHeader(categoryName: String?, categoryImageUrl: String?) {
         binding.tvCategoryName.text = categoryName ?: "Category"
 
         categoryImageUrl?.let { imageUrl ->
             try {
                 val inputStream = requireContext().assets.open(imageUrl)
-                val drawable =
-                    Drawable.createFromStream(inputStream, null)
+                val drawable = Drawable.createFromStream(inputStream, null)
                 binding.ivCategoryImage.setImageDrawable(drawable)
             } catch (_: Exception) {
                 binding.ivCategoryImage.setImageResource(android.R.drawable.ic_menu_gallery)
@@ -72,13 +93,6 @@ class RecipesListFragment : Fragment() {
         binding.rvRecipes.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = recipesAdapter
-        }
-    }
-
-    private fun loadRecipes() {
-        categoryId?.let { id ->
-            val recipes = STUB.getRecipesByCategoryId(id)
-            recipesAdapter.updateRecipes(recipes)
         }
     }
 

@@ -1,31 +1,29 @@
 package com.example.recipexmlapp.ui.recipes.favorites
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipexmlapp.R
-import com.example.recipexmlapp.model.STUB
 import com.example.recipexmlapp.databinding.FragmentFavoritesBinding
 import com.example.recipexmlapp.ui.recipes.recipe.RecipeDetailFragment
 import com.example.recipexmlapp.ui.recipes.recipelist.RecipesAdapter
+import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment() {
     
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
     
-    private lateinit var recipesAdapter: RecipesAdapter
-    
-    companion object {
-        private const val PREFS_NAME = "recipe_favorites"
-        private const val FAVORITES_KEY = "favorites_set"
+    private val viewModel: FavoritesViewModel by viewModels {
+        ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
     }
-    
-    private val sharedPrefs by lazy { requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE) }
+    private lateinit var recipesAdapter: RecipesAdapter
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,13 +36,38 @@ class FavoritesFragment : Fragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
         initRecyclerView()
-        loadFavoriteRecipes()
+        observeViewModel()
+        
+        viewModel.initialize()
     }
     
-    private fun getFavorites(): Set<String> {
-        val savedFavorites: Set<String>? = sharedPrefs.getStringSet(FAVORITES_KEY, emptySet())
-        return savedFavorites ?: emptySet()
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.state.collect { state ->
+                updateUI(state)
+            }
+        }
+    }
+    
+    private fun updateUI(state: FavoritesState) {
+        if (state.isLoading) {
+            // Show loading indicator if needed
+        }
+        
+        state.error?.let { error ->
+            // Show error message if needed
+        }
+        
+        if (state.isEmpty) {
+            binding.rvFavorites.visibility = View.GONE
+            binding.tvEmptyState.visibility = View.VISIBLE
+        } else {
+            binding.rvFavorites.visibility = View.VISIBLE
+            binding.tvEmptyState.visibility = View.GONE
+            recipesAdapter.updateRecipes(state.favoriteRecipes)
+        }
     }
     
     private fun initRecyclerView() {
@@ -64,21 +87,6 @@ class FavoritesFragment : Fragment() {
         parentFragmentManager.beginTransaction()
             .replace(R.id.mainContainer, recipeDetailFragment)
             .commit()
-    }
-    
-    private fun loadFavoriteRecipes() {
-        val favoriteIds = getFavorites()
-        val favoriteIdsInt = favoriteIds.mapNotNull { it.toIntOrNull() }.toSet()
-        val favoriteRecipes = STUB.getRecipesByIds(favoriteIdsInt)
-        
-        if (favoriteRecipes.isEmpty()) {
-            binding.rvFavorites.visibility = View.GONE
-            binding.tvEmptyState.visibility = View.VISIBLE
-        } else {
-            binding.rvFavorites.visibility = View.VISIBLE
-            binding.tvEmptyState.visibility = View.GONE
-            recipesAdapter.updateRecipes(favoriteRecipes)
-        }
     }
     
     override fun onDestroyView() {
