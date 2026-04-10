@@ -9,14 +9,16 @@ import com.example.recipexmlapp.R
 import com.example.recipexmlapp.data.Ingredient
 import java.util.Locale
 
-class IngredientsAdapter(private var ingredients: List<Ingredient>) : RecyclerView.Adapter<IngredientsAdapter.IngredientViewHolder>() {
+class IngredientsAdapter : RecyclerView.Adapter<IngredientsAdapter.IngredientViewHolder>() {
+
+    var dataSet: List<Ingredient> = emptyList()
 
     private var quantity = 1
 
     fun updateIngredients(newIngredients: List<Ingredient>) {
-        val oldSize = ingredients.size
-        ingredients = newIngredients
-        val newSize = ingredients.size
+        val oldSize = dataSet.size
+        dataSet = newIngredients
+        val newSize = dataSet.size
         
         when {
             oldSize == 0 -> notifyItemRangeInserted(0, newSize)
@@ -44,10 +46,10 @@ class IngredientsAdapter(private var ingredients: List<Ingredient>) : RecyclerVi
     }
 
     override fun onBindViewHolder(holder: IngredientViewHolder, position: Int) {
-        holder.bind(ingredients[position], quantity)
+        holder.bind(dataSet[position], quantity)
     }
 
-    override fun getItemCount(): Int = ingredients.size
+    override fun getItemCount(): Int = dataSet.size
 
     class IngredientViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvIngredientName: TextView = itemView.findViewById(R.id.tvIngredientName)
