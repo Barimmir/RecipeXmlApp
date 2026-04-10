@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.R
@@ -50,11 +51,11 @@ class CategoriesListFragment : Fragment() {
     
     private fun updateUI(state: CategoriesListState) {
         if (state.isLoading) {
-            // Show loading indicator if needed
+            // TODO: Show loading indicator
         }
         
-        state.error?.let { error ->
-            // Show error message if needed
+        state.error?.let {
+            // TODO: Show error message
         }
         
         categoriesAdapter.updateCategories(state.categories)
@@ -82,18 +83,12 @@ class CategoriesListFragment : Fragment() {
         val categoryImageUrl = category?.imageName ?: ""
         
         val bundle = Bundle().apply {
-            putInt(RecipesListFragment.Companion.ARG_CATEGORY_ID, categoryId)
-            putString(RecipesListFragment.Companion.ARG_CATEGORY_NAME, categoryName)
-            putString(RecipesListFragment.Companion.ARG_CATEGORY_IMAGE_URL, categoryImageUrl)
+            putInt(RecipesListFragment.ARG_CATEGORY_ID, categoryId)
+            putString(RecipesListFragment.ARG_CATEGORY_NAME, categoryName)
+            putString(RecipesListFragment.ARG_CATEGORY_IMAGE_URL, categoryImageUrl)
         }
         
-        val recipesFragment = RecipesListFragment()
-        recipesFragment.arguments = bundle
-        
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.mainContainer, recipesFragment)
-            .addToBackStack(null)
-            .commit()
+        findNavController().navigate(R.id.recipesListFragment, bundle)
     }
     
     override fun onDestroyView() {

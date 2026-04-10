@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.recipexmlapp.R
 import com.example.recipexmlapp.databinding.FragmentRecipesListBinding
-import com.example.recipexmlapp.ui.recipes.recipe.RecipeDetailFragment
 import kotlinx.coroutines.launch
 
 class RecipesListFragment : Fragment() {
@@ -61,11 +62,11 @@ class RecipesListFragment : Fragment() {
         setupHeader(state.categoryName, state.categoryImageUrl)
         
         if (state.isLoading) {
-            // Show loading indicator if needed
+            // TODO: Show loading indicator
         }
         
-        state.error?.let { error ->
-            // Show error message if needed
+        state.error?.let {
+            // TODO: Show error message
         }
         
         recipesAdapter.updateRecipes(state.recipes)
@@ -97,11 +98,11 @@ class RecipesListFragment : Fragment() {
     }
 
     private fun openRecipeByRecipeId(recipeId: Int) {
-        val recipeDetailFragment = RecipeDetailFragment.newInstance(recipeId)
-
-        parentFragmentManager.beginTransaction()
-            .replace(com.example.recipexmlapp.R.id.mainContainer, recipeDetailFragment)
-            .commit()
+        val bundle = Bundle().apply {
+            putInt("recipeId", recipeId)
+        }
+        
+        findNavController().navigate(R.id.recipeDetailFragment, bundle)
     }
 
     override fun onDestroyView() {
