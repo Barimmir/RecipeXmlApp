@@ -1,47 +1,78 @@
 package com.example.recipexmlapp.ui.recipes.favorites
 
-import com.example.recipexmlapp.data.Recipe
+import android.content.Context
 import androidx.lifecycle.ViewModel
-
-data class FavoritesState(
-    val favoriteRecipes: List<Recipe> = emptyList(),
-    val favoriteIds: Set<String> = emptySet(),
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val isEmpty: Boolean = false
-)
+import androidx.lifecycle.viewModelScope
+import com.example.recipexmlapp.model.STUB
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class FavoritesViewModel : ViewModel() {
     
-    var state = FavoritesState()
-        private set
+    private val _state = MutableStateFlow(FavoritesState())
+    val state: StateFlow<FavoritesState> = _state.asStateFlow()
     
-    fun updateFavoriteRecipes(recipes: List<Recipe>) {
-        state = state.copy(
-            favoriteRecipes = recipes,
-            isEmpty = recipes.isEmpty()
-        )
+    private lateinit var sharedPrefs: android.content.SharedPreferences
+    
+    fun initialize(context: Context) {
+        sharedPrefs = context.getSharedPreferences("recipe_favorites", Context.MODE_PRIVATE)
+        loadFavoriteRecipes()
     }
     
-    fun updateFavoriteIds(favoriteIds: Set<String>) {
-        state = state.copy(favoriteIds = favoriteIds)
+    private fun getFavorites(): Set<String> {
+        val savedFavorites: Set<String>? = sharedPrefs.getStringSet("favorites_set", emptySet())
+        return savedFavorites ?: emptySet()
+    }
+    
+    private fun saveFavorites(favoriteIds: Set<String>) {
+        sharedPrefs.edit()
+            .putStringSet("favorites_set", favoriteIds)
+            .apply()
+    }
+    
+    fun loadFavoriteRecipes() {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true, error = null)
+            
+            try {
+                val favoriteIds = getFavorites()
+                val favoriteIdsInt = favoriteIds.mapNotNull { it.toIntOrNull() }.toSet()
+                val favoriteRecipes = STUB.getRecipesByIds(favoriteIdsInt)
+                
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    favoriteRecipes = favoriteRecipes,
+                    isEmpty = favoriteRecipes.isEmpty()
+                )
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    error = e.message ?: "Unknown error occurred"
+                )
+            }
+        }
     }
     
     fun toggleFavorite(recipeId: Int) {
         val recipeIdString = recipeId.toString()
-        val newFavoriteIds = if (state.favoriteIds.contains(recipeIdString)) {
-            state.favoriteIds - recipeIdString
+        val currentFavorites = getFavorites()
+        val newFavoriteIds = if (currentFavorites.contains(recipeIdString)) {
+            currentFavorites - recipeIdString
         } else {
-            state.favoriteIds + recipeIdString
+            currentFavorites + recipeIdString
         }
-        state = state.copy(favoriteIds = newFavoriteIds)
+        
+        saveFavorites(newFavoriteIds)
+        loadFavoriteRecipes()
     }
     
-    fun setLoading(isLoading: Boolean) {
-        state = state.copy(isLoading = isLoading)
+    fun refreshFavorites() {
+        loadFavoriteRecipes()
     }
     
-    fun setError(error: String?) {
-        state = state.copy(error = error)
+    fun clearError() {
+        _state.value = _state.value.copy(error = null)
     }
 }

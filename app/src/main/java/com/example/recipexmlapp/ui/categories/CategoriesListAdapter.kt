@@ -9,7 +9,7 @@ import com.example.recipexmlapp.databinding.ItemCategoryBinding
 import com.example.recipexmlapp.data.Category
 import java.io.InputStream
 
-class CategoriesListAdapter(private val dataSet: List<Category>) : 
+class CategoriesListAdapter(private var dataSet: List<Category>) : 
     RecyclerView.Adapter<CategoriesListAdapter.ViewHolder>() {
 
     private var itemClickListener: OnItemClickListener? = null
@@ -20,6 +20,11 @@ class CategoriesListAdapter(private val dataSet: List<Category>) :
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         itemClickListener = listener
+    }
+
+    fun updateCategories(newCategories: List<Category>) {
+        dataSet = newCategories
+        notifyDataSetChanged()
     }
 
     class ViewHolder(private val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root) {

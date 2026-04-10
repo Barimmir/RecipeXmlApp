@@ -5,17 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.R
 import com.example.recipexmlapp.databinding.FragmentListCategoriesBinding
-import com.example.recipexmlapp.data.CategoryRepository
 import com.example.recipexmlapp.ui.recipes.recipelist.RecipesListFragment
+import kotlinx.coroutines.launch
 
 class CategoriesListFragment : Fragment() {
     
     private var _binding: FragmentListCategoriesBinding? = null
     private val binding get() = _binding!!
+    
+    private val viewModel: CategoriesListViewModel by viewModels()
+    private lateinit var categoriesAdapter: CategoriesListAdapter
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,14 +33,37 @@ class CategoriesListFragment : Fragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRecycler()
+        
+        setupRecyclerView()
+        observeViewModel()
+        
+        viewModel.initialize()
     }
     
-    private fun initRecycler() {
-        val categories = CategoryRepository.getCategories()
-        val adapter = CategoriesListAdapter(categories)
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.state.collect { state ->
+                updateUI(state)
+            }
+        }
+    }
+    
+    private fun updateUI(state: CategoriesListState) {
+        if (state.isLoading) {
+            // Show loading indicator if needed
+        }
         
-        adapter.setOnItemClickListener(object : CategoriesListAdapter.OnItemClickListener {
+        state.error?.let { error ->
+            // Show error message if needed
+        }
+        
+        categoriesAdapter.updateCategories(state.categories)
+    }
+    
+    private fun setupRecyclerView() {
+        categoriesAdapter = CategoriesListAdapter(emptyList())
+        
+        categoriesAdapter.setOnItemClickListener(object : CategoriesListAdapter.OnItemClickListener {
             override fun onItemClick(categoryId: Int) {
                 openRecipesByCategoryId(categoryId)
             }
@@ -43,11 +71,11 @@ class CategoriesListFragment : Fragment() {
         
         val recyclerView: RecyclerView = binding.root.findViewById(R.id.rvCategories)
         recyclerView.layoutManager = GridLayoutManager(context, 2)
-        recyclerView.adapter = adapter
+        recyclerView.adapter = categoriesAdapter
     }
     
     private fun openRecipesByCategoryId(categoryId: Int) {
-        val categories = CategoryRepository.getCategories()
+        val categories = viewModel.state.value.categories
         val category = categories.find { it.id == categoryId }
         
         val categoryName = category?.title ?: ""
