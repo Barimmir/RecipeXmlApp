@@ -6,9 +6,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.findNavController
 import com.example.recipexmlapp.R
-import com.example.recipexmlapp.ui.categories.CategoriesListFragment
-import com.example.recipexmlapp.ui.recipes.favorites.FavoritesFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,19 +25,11 @@ class MainActivity : AppCompatActivity() {
         val btnFavorites = findViewById<Button>(R.id.btn_favorites)
         
         btnRecipes.setOnClickListener {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContainer, CategoriesListFragment())
-                .commit()
+            findNavController(R.id.nav_host_fragment).navigate(R.id.categoriesListFragment)
         }
         
         btnFavorites.setOnClickListener {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.mainContainer, FavoritesFragment())
-                .commit()
+            findNavController(R.id.nav_host_fragment).navigate(R.id.favoritesFragment)
         }
-        
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.mainContainer, CategoriesListFragment())
-            .commit()
     }
 }

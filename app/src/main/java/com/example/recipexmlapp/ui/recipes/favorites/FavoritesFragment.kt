@@ -8,10 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipexmlapp.R
 import com.example.recipexmlapp.databinding.FragmentFavoritesBinding
-import com.example.recipexmlapp.ui.recipes.recipe.RecipeDetailFragment
 import com.example.recipexmlapp.ui.recipes.recipelist.RecipesAdapter
 import kotlinx.coroutines.launch
 
@@ -53,11 +53,11 @@ class FavoritesFragment : Fragment() {
     
     private fun updateUI(state: FavoritesState) {
         if (state.isLoading) {
-            // Show loading indicator if needed
+            // TODO: Show loading indicator
         }
         
-        state.error?.let { error ->
-            // Show error message if needed
+        state.error?.let {
+            // TODO: Show error message
         }
         
         if (state.isEmpty) {
@@ -82,11 +82,11 @@ class FavoritesFragment : Fragment() {
     }
     
     private fun openRecipeByRecipeId(recipeId: Int) {
-        val recipeDetailFragment = RecipeDetailFragment.newInstance(recipeId)
+        val bundle = Bundle().apply {
+            putInt("recipeId", recipeId)
+        }
         
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.mainContainer, recipeDetailFragment)
-            .commit()
+        findNavController().navigate(R.id.recipeDetailFragment, bundle)
     }
     
     override fun onDestroyView() {
