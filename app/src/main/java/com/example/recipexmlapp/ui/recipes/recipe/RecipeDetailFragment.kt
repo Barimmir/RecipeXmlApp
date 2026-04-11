@@ -10,6 +10,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.R
@@ -30,6 +31,8 @@ class PortionSeekBarListener(val onChangeIngredients: (Int) -> Unit) : OnSeekBar
 }
 
 class RecipeDetailFragment : Fragment() {
+
+    private val args: RecipeDetailFragmentArgs by navArgs()
 
     companion object {
         fun newInstance(recipeId: Int): RecipeDetailFragment {
@@ -57,11 +60,9 @@ class RecipeDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            recipeId = it.getInt("recipeId", 0)
-            if (recipeId == 0) {
-                throw IllegalArgumentException("RecipeId argument is required")
-            }
+        recipeId = args.recipeId
+        if (recipeId == 0) {
+            throw IllegalArgumentException("RecipeId argument is required")
         }
     }
 
@@ -75,8 +76,12 @@ class RecipeDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadRecipe(recipeId)
+        loadRecipe(args.recipeId)
         initUI(view)
+    }
+
+    private fun loadRecipe(recipeId: Int) {
+        viewModel.loadRecipe(recipeId)
     }
 
     private fun initUI(view: View) {

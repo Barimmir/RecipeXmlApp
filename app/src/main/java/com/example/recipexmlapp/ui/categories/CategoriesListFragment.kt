@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.R
 import com.example.recipexmlapp.databinding.FragmentListCategoriesBinding
-import com.example.recipexmlapp.ui.recipes.recipelist.RecipesListFragment
 import kotlinx.coroutines.launch
 
 class CategoriesListFragment : Fragment() {
@@ -82,13 +81,14 @@ class CategoriesListFragment : Fragment() {
         val categoryName = category?.title ?: ""
         val categoryImageUrl = category?.imageName ?: ""
         
-        val bundle = Bundle().apply {
-            putInt(RecipesListFragment.ARG_CATEGORY_ID, categoryId)
-            putString(RecipesListFragment.ARG_CATEGORY_NAME, categoryName)
-            putString(RecipesListFragment.ARG_CATEGORY_IMAGE_URL, categoryImageUrl)
-        }
+        val action = CategoriesListFragmentDirections
+            .actionCategoriesListFragmentToRecipesListFragment(
+                categoryId = categoryId,
+                categoryName = categoryName,
+                categoryImageUrl = categoryImageUrl
+            )
         
-        findNavController().navigate(R.id.recipesListFragment, bundle)
+        findNavController().navigate(action)
     }
     
     override fun onDestroyView() {
