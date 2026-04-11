@@ -9,24 +9,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.recipexmlapp.R
 import com.example.recipexmlapp.databinding.FragmentRecipesListBinding
 import kotlinx.coroutines.launch
 
 class RecipesListFragment : Fragment() {
+
+    private val args: RecipesListFragmentArgs by navArgs()
 
     private var _binding: FragmentRecipesListBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: RecipesListViewModel by viewModels()
     private lateinit var recipesAdapter: RecipesAdapter
-
-    companion object {
-        const val ARG_CATEGORY_ID = "ARG_CATEGORY_ID"
-        const val ARG_CATEGORY_NAME = "ARG_CATEGORY_NAME"
-        const val ARG_CATEGORY_IMAGE_URL = "ARG_CATEGORY_IMAGE_URL"
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,11 +39,7 @@ class RecipesListFragment : Fragment() {
         setupRecyclerView()
         observeViewModel()
         
-        val categoryId = arguments?.getInt(ARG_CATEGORY_ID)
-        val categoryName = arguments?.getString(ARG_CATEGORY_NAME)
-        val categoryImageUrl = arguments?.getString(ARG_CATEGORY_IMAGE_URL)
-        
-        viewModel.initialize(categoryId, categoryName, categoryImageUrl)
+        viewModel.initialize(args.categoryId, args.categoryName, args.categoryImageUrl)
     }
 
     private fun observeViewModel() {
@@ -98,11 +90,9 @@ class RecipesListFragment : Fragment() {
     }
 
     private fun openRecipeByRecipeId(recipeId: Int) {
-        val bundle = Bundle().apply {
-            putInt("recipeId", recipeId)
-        }
-        
-        findNavController().navigate(R.id.recipeDetailFragment, bundle)
+        val action = RecipesListFragmentDirections
+            .actionRecipesListFragmentToRecipeDetailFragment(recipeId)
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {

@@ -9,24 +9,53 @@
         android:id="@+id/categoriesListFragment"
         android:name="com.example.recipexmlapp.ui.categories.CategoriesListFragment"
         android:label="Categories"
-        tools:layout="@layout/fragment_list_categories" />
+        tools:layout="@layout/fragment_list_categories">
+        <action
+            android:id="@+id/action_categoriesListFragment_to_recipesListFragment"
+            app:destination="@id/recipesListFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/recipesListFragment"
         android:name="com.example.recipexmlapp.ui.recipes.recipelist.RecipesListFragment"
         android:label="Recipes"
-        tools:layout="@layout/fragment_recipes_list" />
+        tools:layout="@layout/fragment_recipes_list">
+        <argument
+            android:name="categoryId"
+            app:argType="integer" />
+        <argument
+            android:name="categoryName"
+            app:argType="string" />
+        <argument
+            android:name="categoryImageUrl"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_recipesListFragment_to_recipeDetailFragment"
+            app:destination="@id/recipeDetailFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/recipeDetailFragment"
         android:name="com.example.recipexmlapp.ui.recipes.recipe.RecipeDetailFragment"
         android:label="Recipe Detail"
-        tools:layout="@layout/fragment_recipe_detail" />
+        tools:layout="@layout/fragment_recipe_detail">
+        <argument
+            android:name="recipeId"
+            app:argType="integer" />
+    </fragment>
 
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.recipexmlapp.ui.recipes.favorites.FavoritesFragment"
         android:label="Favorites"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites">
+        <action
+            android:id="@+id/action_favoritesFragment_to_recipeDetailFragment"
+            app:destination="@id/recipeDetailFragment" />
+        <action
+            android:id="@+id/action_favoritesFragment_to_categoriesListFragment"
+            app:destination="@id/categoriesListFragment" />
+    </fragment>
 
 </navigation>

@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.recipexmlapp.R
 import com.example.recipexmlapp.databinding.FragmentFavoritesBinding
 import com.example.recipexmlapp.ui.recipes.recipelist.RecipesAdapter
 import kotlinx.coroutines.launch
@@ -79,14 +78,19 @@ class FavoritesFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = recipesAdapter
         }
+        
+        // Настройка кнопки возврата к категориям
+        binding.ibBackToCategories.setOnClickListener {
+            val action = FavoritesFragmentDirections
+                .actionFavoritesFragmentToCategoriesListFragment()
+            findNavController().navigate(action)
+        }
     }
     
     private fun openRecipeByRecipeId(recipeId: Int) {
-        val bundle = Bundle().apply {
-            putInt("recipeId", recipeId)
-        }
-        
-        findNavController().navigate(R.id.recipeDetailFragment, bundle)
+        val action = FavoritesFragmentDirections
+            .actionFavoritesFragmentToRecipeDetailFragment(recipeId)
+        findNavController().navigate(action)
     }
     
     override fun onDestroyView() {
