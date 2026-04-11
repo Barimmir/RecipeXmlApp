@@ -34,16 +34,7 @@ class RecipeDetailFragment : Fragment() {
 
     private val args: RecipeDetailFragmentArgs by navArgs()
 
-    companion object {
-        fun newInstance(recipeId: Int): RecipeDetailFragment {
-            return RecipeDetailFragment().apply {
-                arguments = Bundle().apply {
-                    putInt("recipeId", recipeId)
-                }
-            }
-        }
-    }
-
+    
     private val viewModel: RecipeDetailViewModel by viewModels {
         RecipeDetailViewModelFactory(requireActivity().application)
     }
