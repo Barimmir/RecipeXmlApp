@@ -39,7 +39,7 @@ class RecipesListFragment : Fragment() {
         setupRecyclerView()
         observeViewModel()
         
-        viewModel.initialize(args.categoryId, args.categoryName, args.categoryImageUrl)
+        viewModel.initialize(args.category.id, args.category.title, args.category.imageName)
     }
 
     private fun observeViewModel() {
