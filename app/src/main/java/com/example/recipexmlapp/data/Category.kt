@@ -2,7 +2,9 @@ package com.example.recipexmlapp.data
 
 import android.os.Parcelable
 import android.os.Parcel
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Category(
     val id: Int,
     val title: String,
