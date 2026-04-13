@@ -41,13 +41,13 @@ class MainActivity : AppCompatActivity() {
             println("Выполняю запрос на потоке: ${Thread.currentThread().name}")
             val url = URL("https://recipes.androidsprint.ru/api/category")
             val connection = url.openConnection() as HttpURLConnection
-            connection.content
             Log.i("!!!", "responseCode: ${connection.responseCode}")
             Log.i("!!!", "responseMessage: ${connection.responseMessage}")
             val responseBody = connection.getInputStream().bufferedReader().readText()
             Log.i("!!!", "Body: $responseBody")
             val json = Json { ignoreUnknownKeys = true }
             val categories = json.decodeFromString<List<Category>>(responseBody)
+            connection.disconnect()
         }
         thread.start()
     }
