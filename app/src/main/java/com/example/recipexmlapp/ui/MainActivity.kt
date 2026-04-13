@@ -9,11 +9,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.findNavController
 import com.example.recipexmlapp.R
+import com.example.recipexmlapp.data.Category
+import kotlinx.serialization.json.Json
 import java.net.HttpURLConnection
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        println("Метод onCreate() выполняется на потоке: ${Thread.currentThread().name}")
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
@@ -34,14 +37,18 @@ class MainActivity : AppCompatActivity() {
         btnFavorites.setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.favoritesFragment)
         }
-        val tread = Thread {
+        val thread = Thread {
+            println("Выполняю запрос на потоке: ${Thread.currentThread().name}")
             val url = URL("https://recipes.androidsprint.ru/api/category")
             val connection = url.openConnection() as HttpURLConnection
             connection.content
             Log.i("!!!", "responseCode: ${connection.responseCode}")
             Log.i("!!!", "responseMessage: ${connection.responseMessage}")
-            Log.i("!!!", "Body: ${connection.getInputStream().bufferedReader().readText()}")
+            val responseBody = connection.getInputStream().bufferedReader().readText()
+            Log.i("!!!", "Body: $responseBody")
+            val json = Json { ignoreUnknownKeys = true }
+            val categories = json.decodeFromString<List<Category>>(responseBody)
         }
-        tread.start()
+        thread.start()
     }
 }
