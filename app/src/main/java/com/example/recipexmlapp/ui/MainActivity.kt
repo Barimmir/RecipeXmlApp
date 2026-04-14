@@ -10,11 +10,17 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.findNavController
 import com.example.recipexmlapp.R
 import com.example.recipexmlapp.data.Category
+import com.example.recipexmlapp.data.Recipe
 import kotlinx.serialization.json.Json
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
+
+    private val threadPool = Executors.newFixedThreadPool(10)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         println("Метод onCreate() выполняется на потоке: ${Thread.currentThread().name}")
         super.onCreate(savedInstanceState)
@@ -37,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         btnFavorites.setOnClickListener {
             findNavController(R.id.nav_host_fragment).navigate(R.id.favoritesFragment)
         }
+
         val thread = Thread {
             println("Выполняю запрос на потоке: ${Thread.currentThread().name}")
             val url = URL("https://recipes.androidsprint.ru/api/category")
@@ -48,6 +55,46 @@ class MainActivity : AppCompatActivity() {
             val json = Json { ignoreUnknownKeys = true }
             val categories = json.decodeFromString<List<Category>>(responseBody)
             connection.disconnect()
+
+            val categoryIds = categories.map { it.id }
+
+            val recipesToId = categoryIds.map { categoryId ->
+                threadPool.submit(Callable {
+                    try {
+                        println("Getting recipes for category $categoryId on thread: ${Thread.currentThread().name}")
+                        val recipeUrl =
+                            URL("https://recipes.androidsprint.ru/api/category/$categoryId/recipes")
+                        val recipeConnection = recipeUrl.openConnection() as HttpURLConnection
+                        recipeConnection.requestMethod = "GET"
+
+                        val recipeResponseBody =
+                            recipeConnection.getInputStream().bufferedReader().readText()
+                        val recipes = json.decodeFromString<List<Recipe>>(recipeResponseBody)
+                        recipeConnection.disconnect()
+
+                        println("Category $categoryId: received ${recipes.size} recipes")
+                        recipes.forEach { recipe ->
+                            println("  - Recipe: ${recipe.id} - ${recipe.title}")
+                        }
+
+                        categoryId to recipes
+                    } catch (e: Exception) {
+                        println("Error getting recipes for category $categoryId: ${e.message}")
+                        categoryId to emptyList<Recipe>()
+                    }
+                })
+            }
+            recipesToId.forEach { recipesToId ->
+                try {
+                    val (categoryId, recipes) = recipesToId.get()
+                    println("Категория $categoryId: ${recipes.size} рецептов загружено")
+                    recipes.forEach { recipe ->
+                        println("  - ${recipe.title}")
+                    }
+                } catch (e: Exception) {
+                    println("Ошибка при получении результата: ${e.message}")
+                }
+            }
         }
         thread.start()
     }

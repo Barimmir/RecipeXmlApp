@@ -1,7 +1,9 @@
 package com.example.recipexmlapp.model
 import com.example.recipexmlapp.data.Recipe
 import com.example.recipexmlapp.data.Ingredient
+import kotlinx.serialization.Serializable
 
+@Serializable
 object STUB {
     private val burgerRecipes = listOf(
         Recipe(
