@@ -1,4 +1,5 @@
 package com.example.recipexmlapp.model
+
 import com.example.recipexmlapp.data.Recipe
 import com.example.recipexmlapp.data.Ingredient
 
@@ -39,7 +40,7 @@ object STUB {
             imageUrl = "burger_hamburger.png"
         )
     )
-    
+
     fun getRecipesByCategoryId(categoryId: Int): List<Recipe> {
         return if (categoryId == 0) {
             burgerRecipes
@@ -47,11 +48,11 @@ object STUB {
             emptyList()
         }
     }
-    
+
     fun getRecipeById(id: Int): Recipe? {
         return burgerRecipes.find { it.id == id }
     }
-    
+
     fun getRecipesByIds(ids: Set<Int>): List<Recipe> {
         return burgerRecipes.filter { it.id in ids }
     }
