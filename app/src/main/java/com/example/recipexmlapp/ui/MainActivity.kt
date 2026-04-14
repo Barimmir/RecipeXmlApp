@@ -98,4 +98,9 @@ class MainActivity : AppCompatActivity() {
         }
         thread.start()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        threadPool.shutdown()
+    }
 }

@@ -2,7 +2,9 @@ package com.example.recipexmlapp.data
 
 import android.os.Parcel
 import android.os.Parcelable
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Recipe(
     val id: Int,
     val title: String,
@@ -34,6 +36,7 @@ data class Recipe(
     }
 }
 
+@Serializable
 data class Ingredient(
     val quantity: String,
     val unitOfMeasure: String,
