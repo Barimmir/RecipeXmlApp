@@ -33,10 +33,12 @@ class CategoriesListFragment : Fragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        println("CategoriesListFragment: onViewCreated called")
         
         setupRecyclerView()
         observeViewModel()
         
+        println("CategoriesListFragment: Calling viewModel.initialize()")
         viewModel.initialize()
     }
     
@@ -49,14 +51,19 @@ class CategoriesListFragment : Fragment() {
     }
     
     private fun updateUI(state: CategoriesListState) {
+        println("CategoriesListFragment: updateUI called with isLoading=${state.isLoading}, categories=${state.categories.size}, error=${state.error}")
+        
         if (state.isLoading) {
+            println("CategoriesListFragment: Showing loading state")
             // TODO: Show loading indicator
         }
         
         state.error?.let {
+            println("CategoriesListFragment: Showing error: $it")
             // TODO: Show error message
         }
         
+        println("CategoriesListFragment: Updating adapter with ${state.categories.size} categories")
         categoriesAdapter.updateCategories(state.categories)
     }
     
@@ -75,13 +82,21 @@ class CategoriesListFragment : Fragment() {
     }
     
     private fun openRecipesByCategoryId(categoryId: Int) {
+        println("CategoriesListFragment: openRecipesByCategoryId called with categoryId=$categoryId")
         val categories = viewModel.state.value.categories
+        println("CategoriesListFragment: Available categories: ${categories.size}")
         val category = categories.find { it.id == categoryId }
             ?: throw IllegalArgumentException("Category with id $categoryId not found")
         
+        println("CategoriesListFragment: Found category: ${category.id} - ${category.title}")
         val action = CategoriesListFragmentDirections
-            .actionCategoriesListFragmentToRecipesListFragment(category)
+            .actionCategoriesListFragmentToRecipesListFragment(
+                categoryId = category.id,
+                categoryName = category.title,
+                categoryImageUrl = category.imageName
+            )
         
+        println("CategoriesListFragment: Navigating to RecipesListFragment")
         findNavController().navigate(action)
     }
     

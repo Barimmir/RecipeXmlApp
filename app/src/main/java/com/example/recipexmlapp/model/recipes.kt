@@ -8,6 +8,7 @@ object STUB {
         Recipe(
             id = 1,
             title = "Чизбургер",
+            description = "Классический чизбургер с говяжьей котлетой, сыром и солеными огурцами",
             ingredients = listOf(
                 Ingredient("150", "г", "говяжий фарш"),
                 Ingredient("1", "шт", "булочка"),
@@ -25,6 +26,7 @@ object STUB {
         Recipe(
             id = 2,
             title = "Хамбургер",
+            description = "Традиционный хамбургер с говяжьей котлетой, свежими овощами и сыром чеддер",
             ingredients = listOf(
                 Ingredient("200", "г", "говяжий фарш"),
                 Ingredient("1", "шт", "булочка"),

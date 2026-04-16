@@ -35,11 +35,13 @@ class RecipesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        println("RecipesListFragment: onViewCreated called")
+        println("RecipesListFragment: args.categoryId=${args.categoryId}, categoryName=${args.categoryName}, categoryImageUrl=${args.categoryImageUrl}")
 
         setupRecyclerView()
         observeViewModel()
         
-        viewModel.initialize(args.category.id, args.category.title, args.category.imageName)
+        viewModel.initialize(args.categoryId, args.categoryName, args.categoryImageUrl)
     }
 
     private fun observeViewModel() {
@@ -51,16 +53,20 @@ class RecipesListFragment : Fragment() {
     }
 
     private fun updateUI(state: RecipesListState) {
+        println("RecipesListFragment: updateUI called with isLoading=${state.isLoading}, recipes=${state.recipes.size}, error=${state.error}")
         setupHeader(state.categoryName, state.categoryImageUrl)
         
         if (state.isLoading) {
+            println("RecipesListFragment: Showing loading state")
             // TODO: Show loading indicator
         }
         
         state.error?.let {
+            println("RecipesListFragment: Showing error: $it")
             // TODO: Show error message
         }
         
+        println("RecipesListFragment: Updating adapter with ${state.recipes.size} recipes")
         recipesAdapter.updateRecipes(state.recipes)
     }
 

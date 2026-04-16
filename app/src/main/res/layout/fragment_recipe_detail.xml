@@ -52,6 +52,25 @@
             app:layout_constraintStart_toStartOf="@id/ivRecipeImage"
             tools:text="Recipe Title" />
 
+        <TextView
+            android:id="@+id/tvRecipeDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:background="@drawable/rounded_background"
+            android:maxLines="3"
+            android:ellipsize="end"
+            app:layout_constraintBottom_toBottomOf="@id/ivRecipeImage"
+            app:layout_constraintStart_toStartOf="@id/ivRecipeImage"
+            app:layout_constraintEnd_toStartOf="@id/ibFavorite"
+            tools:text="Recipe description goes here" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView

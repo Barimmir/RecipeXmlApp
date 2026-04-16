@@ -1,13 +1,13 @@
 package com.example.recipexmlapp.ui.recipes.favorites
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.recipexmlapp.model.STUB
+import com.example.recipexmlapp.data.RecipesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import androidx.core.content.edit
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
     
@@ -15,6 +15,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     val state: StateFlow<FavoritesState> = _state.asStateFlow()
     
     private val sharedPrefs = application.getSharedPreferences("recipe_favorites", Application.MODE_PRIVATE)
+    private val recipesRepository = RecipesRepository()
     
     fun initialize() {
         loadFavoriteRecipes()
@@ -26,31 +27,40 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     }
     
     private fun saveFavorites(favoriteIds: Set<String>) {
-        sharedPrefs.edit()
-            .putStringSet("favorites_set", favoriteIds)
-            .apply()
+        sharedPrefs.edit {
+            putStringSet("favorites_set", favoriteIds)
+        }
     }
     
     fun loadFavoriteRecipes() {
-        viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, error = null)
-            
-            try {
-                val favoriteIds = getFavorites()
-                val favoriteIdsInt = favoriteIds.mapNotNull { it.toIntOrNull() }.toSet()
-                val favoriteRecipes = STUB.getRecipesByIds(favoriteIdsInt)
-                
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    favoriteRecipes = favoriteRecipes,
-                    isEmpty = favoriteRecipes.isEmpty()
-                )
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    error = e.message ?: "Unknown error occurred"
-                )
+        _state.value = _state.value.copy(isLoading = true, error = null)
+        
+        val favoriteIds = getFavorites()
+        val favoriteIdsInt = favoriteIds.mapNotNull { it.toIntOrNull() }.toSet()
+        
+        if (favoriteIdsInt.isNotEmpty()) {
+            recipesRepository.getFavoriteRecipes(favoriteIdsInt) { recipes ->
+                if (recipes != null) {
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        favoriteRecipes = recipes,
+                        isEmpty = recipes.isEmpty()
+                    )
+                } else {
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        error = "Ошибка получения данных",
+                        isEmpty = true
+                    )
+                    Toast.makeText(getApplication(), "Ошибка получения данных", Toast.LENGTH_SHORT).show()
+                }
             }
+        } else {
+            _state.value = _state.value.copy(
+                isLoading = false,
+                favoriteRecipes = emptyList(),
+                isEmpty = true
+            )
         }
     }
     
@@ -73,5 +83,10 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     
     fun clearError() {
         _state.value = _state.value.copy(error = null)
+    }
+    
+    override fun onCleared() {
+        super.onCleared()
+        recipesRepository.shutdown()
     }
 }

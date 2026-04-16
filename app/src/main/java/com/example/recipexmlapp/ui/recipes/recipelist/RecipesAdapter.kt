@@ -1,6 +1,6 @@
 package com.example.recipexmlapp.ui.recipes.recipelist
 
-import android.R
+import com.example.recipexmlapp.R
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -26,7 +26,10 @@ class RecipesAdapter(
         holder.bind(recipes[position])
     }
 
-    override fun getItemCount(): Int = recipes.size
+    override fun getItemCount(): Int {
+        println("RecipesAdapter: getItemCount called, returning ${recipes.size}")
+        return recipes.size
+    }
 
     inner class RecipeViewHolder(
         private val binding: ItemRecipeCardBinding
@@ -35,12 +38,17 @@ class RecipesAdapter(
         fun bind(recipe: Recipe) {
             binding.tvRecipeTitle.text = recipe.title
 
+            binding.tvRecipeDescription.text = recipe.description
+
             try {
+                println("RecipesAdapter: Loading image: ${recipe.imageUrl}")
                 val inputStream = binding.root.context.assets.open(recipe.imageUrl)
                 val drawable = Drawable.createFromStream(inputStream, null)
                 binding.ivRecipeImage.setImageDrawable(drawable)
-            } catch (_: Exception) {
-                binding.ivRecipeImage.setImageResource(R.drawable.ic_menu_gallery)
+                println("RecipesAdapter: Image loaded successfully: ${recipe.imageUrl}")
+            } catch (e: Exception) {
+                println("RecipesAdapter: Failed to load image: ${recipe.imageUrl}, error: ${e.message}")
+                binding.ivRecipeImage.setImageResource(R.drawable.ic_placeholder_image)
             }
 
             binding.root.setOnClickListener {
@@ -50,7 +58,9 @@ class RecipesAdapter(
     }
 
     fun updateRecipes(newRecipes: List<Recipe>) {
+        println("RecipesAdapter: updateRecipes called with ${newRecipes.size} recipes")
         recipes = newRecipes
+        println("RecipesAdapter: notifyDataSetChanged called, itemCount will be ${itemCount}")
         notifyDataSetChanged()
     }
 }
