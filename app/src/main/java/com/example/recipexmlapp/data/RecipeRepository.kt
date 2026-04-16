@@ -7,6 +7,7 @@ object RecipeRepository {
             Recipe(
                 id = 0,
                 title = "Классический бургер с говядиной",
+                description = "C juicy beef burger with fresh vegetables and classic sauces. Perfect choice for lunch or dinner",
                 ingredients = listOf(
                     Ingredient("0.5", "кг", "Говяжий фарш"),
                     Ingredient("1.0", "шт", "Луковица, мелко нарезанная"),
@@ -30,6 +31,7 @@ object RecipeRepository {
             Recipe(
                 id = 1,
                 title = "Чизбургер с беконом",
+                description = "Delicious cheeseburger with crispy bacon and melted cheese. Great combination for spicy food lovers",
                 ingredients = listOf(
                     Ingredient("0.4", "кг", "Говяжий фарш"),
                     Ingredient("4.0", "шт", "Ломтика бекона"),

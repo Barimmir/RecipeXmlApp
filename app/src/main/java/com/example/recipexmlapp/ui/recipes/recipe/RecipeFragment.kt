@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.recipexmlapp.data.Recipe
-import android.os.Build
 
 class RecipeFragment : Fragment() {
     
@@ -37,11 +36,6 @@ class RecipeFragment : Fragment() {
     }
     
     private fun getRecipeFromArguments(): Recipe? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getParcelable("ARG_RECIPE", Recipe::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            arguments?.getParcelable("ARG_RECIPE")
-        }
+        return null
     }
 }

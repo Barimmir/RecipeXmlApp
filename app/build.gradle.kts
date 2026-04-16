@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -38,6 +39,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    
+    //noinspection WrongGradleMethod
+    kotlin {
+        jvmToolchain(11)
+    }
 }
 
 dependencies {
@@ -49,9 +55,13 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.kotlinx.serialization.json.v1100)
 }

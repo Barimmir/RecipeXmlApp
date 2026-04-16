@@ -49,6 +49,7 @@ class CategoriesListFragment : Fragment() {
     }
     
     private fun updateUI(state: CategoriesListState) {
+        
         if (state.isLoading) {
             // TODO: Show loading indicator
         }
@@ -80,7 +81,11 @@ class CategoriesListFragment : Fragment() {
             ?: throw IllegalArgumentException("Category with id $categoryId not found")
         
         val action = CategoriesListFragmentDirections
-            .actionCategoriesListFragmentToRecipesListFragment(category)
+            .actionCategoriesListFragmentToRecipesListFragment(
+                categoryId = category.id,
+                categoryName = category.title,
+                categoryImageUrl = category.imageName
+            )
         
         findNavController().navigate(action)
     }

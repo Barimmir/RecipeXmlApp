@@ -34,13 +34,14 @@ class RecipeDetailFragment : Fragment() {
 
     private val args: RecipeDetailFragmentArgs by navArgs()
 
-    
+
     private val viewModel: RecipeDetailViewModel by viewModels {
         RecipeDetailViewModelFactory(requireActivity().application)
     }
     private var recipeId: Int = 0
     private lateinit var ivRecipeImage: ImageView
     private lateinit var tvRecipeTitle: TextView
+    private lateinit var tvRecipeDescription: TextView
     private lateinit var tvPortions: TextView
     private lateinit var seekBarPortions: SeekBar
     private lateinit var ibFavorite: ImageButton
@@ -52,10 +53,7 @@ class RecipeDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         recipeId = args.recipeId
-        if (recipeId == 0) {
-            throw IllegalArgumentException("RecipeId argument is required")
-        }
-    }
+            }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,13 +76,13 @@ class RecipeDetailFragment : Fragment() {
     private fun initUI(view: View) {
         ivRecipeImage = view.findViewById(R.id.ivRecipeImage)
         tvRecipeTitle = view.findViewById(R.id.tvRecipeTitle)
+        tvRecipeDescription = view.findViewById(R.id.tvRecipeDescription)
         tvPortions = view.findViewById(R.id.tvPortions)
         seekBarPortions = view.findViewById(R.id.seekBarPortions)
         ibFavorite = view.findViewById(R.id.ibFavorite)
         rvIngredients = view.findViewById(R.id.rvIngredients)
         rvMethod = view.findViewById(R.id.rvMethod)
 
-        // Инициализация адаптеров
         ingredientsAdapter = IngredientsAdapter()
         rvIngredients.adapter = ingredientsAdapter
         rvIngredients.layoutManager = LinearLayoutManager(requireContext())
@@ -93,7 +91,6 @@ class RecipeDetailFragment : Fragment() {
         rvMethod.adapter = methodAdapter
         rvMethod.layoutManager = LinearLayoutManager(requireContext())
 
-        // Добавление разделителей
         val ingredientsDivider =
             MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
         rvIngredients.addItemDecoration(ingredientsDivider)
@@ -108,18 +105,18 @@ class RecipeDetailFragment : Fragment() {
                     if (it.isLowerCase()) it.titlecase() else it.toString()
                 }
 
-                // Установка изображения из стейта
+                tvRecipeDescription.text = recipe.description
+
                 ivRecipeImage.setImageDrawable(state.recipeImage)
-                
-                // Обновление адаптеров данными из стейта
+
                 ingredientsAdapter.updateIngredients(recipe.ingredients)
                 ingredientsAdapter.updatePortions(state.portionsCount)
                 methodAdapter.updateMethod(recipe.method)
             }
-            
+
             tvPortions.text = state.portionsCount.toString()
             seekBarPortions.progress = state.portionsCount - 1
-            
+
             if (state.isFavorite) {
                 ibFavorite.setImageResource(R.drawable.ic_heart)
             } else {
@@ -131,7 +128,6 @@ class RecipeDetailFragment : Fragment() {
             viewModel.onFavoritesClicked()
         }
 
-        // Настройка SeekBar для обновления порций
         seekBarPortions.setOnSeekBarChangeListener(PortionSeekBarListener { progress ->
             val portions = progress + 1
             viewModel.updatePortions(portions)
