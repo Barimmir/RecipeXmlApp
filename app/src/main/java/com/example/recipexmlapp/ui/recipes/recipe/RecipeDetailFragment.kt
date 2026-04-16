@@ -53,8 +53,7 @@ class RecipeDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         recipeId = args.recipeId
-        println("RecipeDetailFragment: onCreate with recipeId=$recipeId")
-    }
+            }
 
     override fun onCreateView(
         inflater: LayoutInflater,

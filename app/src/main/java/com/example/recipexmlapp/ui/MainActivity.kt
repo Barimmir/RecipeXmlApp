@@ -11,8 +11,7 @@ import com.example.recipexmlapp.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        println("Method onCreate() runs on thread: ${Thread.currentThread().name}")
-        super.onCreate(savedInstanceState)
+                super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 

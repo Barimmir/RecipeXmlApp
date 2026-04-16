@@ -27,7 +27,6 @@ class RecipesAdapter(
     }
 
     override fun getItemCount(): Int {
-        println("RecipesAdapter: getItemCount called, returning ${recipes.size}")
         return recipes.size
     }
 
@@ -41,13 +40,10 @@ class RecipesAdapter(
             binding.tvRecipeDescription.text = recipe.description
 
             try {
-                println("RecipesAdapter: Loading image: ${recipe.imageUrl}")
                 val inputStream = binding.root.context.assets.open(recipe.imageUrl)
                 val drawable = Drawable.createFromStream(inputStream, null)
                 binding.ivRecipeImage.setImageDrawable(drawable)
-                println("RecipesAdapter: Image loaded successfully: ${recipe.imageUrl}")
             } catch (e: Exception) {
-                println("RecipesAdapter: Failed to load image: ${recipe.imageUrl}, error: ${e.message}")
                 binding.ivRecipeImage.setImageResource(R.drawable.ic_placeholder_image)
             }
 
@@ -58,9 +54,7 @@ class RecipesAdapter(
     }
 
     fun updateRecipes(newRecipes: List<Recipe>) {
-        println("RecipesAdapter: updateRecipes called with ${newRecipes.size} recipes")
         recipes = newRecipes
-        println("RecipesAdapter: notifyDataSetChanged called, itemCount will be ${itemCount}")
         notifyDataSetChanged()
     }
 }
