@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.create
 import java.util.concurrent.Executors
 
-class RecipesRepository {
+object RecipesRepository {
     
     private val json = Json { ignoreUnknownKeys = true }
     
@@ -32,21 +32,12 @@ class RecipesRepository {
     private val threadPool = Executors.newFixedThreadPool(10)
     
     fun getCategories(callback: (List<Category>?) -> Unit) {
-        println("RecipesRepository: getCategories called")
         threadPool.submit {
             try {
-                println("RecipesRepository: Starting API call...")
                 val response = apiService.getCategories().execute()
-                println("RecipesRepository: Response code: ${response.code()}")
-                println("RecipesRepository: Response message: ${response.message()}")
-                println("RecipesRepository: Response successful: ${response.isSuccessful()}")
                 
                 if (response.isSuccessful()) {
                     val categories = response.body()
-                    println("RecipesRepository: Categories received: ${categories?.size ?: 0}")
-                    categories?.forEach { category ->
-                        println("RecipesRepository: Category: ${category.id} - ${category.title}")
-                    }
                     callback(categories)
                 } else {
                     callback(null)
@@ -61,18 +52,10 @@ class RecipesRepository {
     fun getRecipesByCategory(categoryId: Int, callback: (List<Recipe>?) -> Unit) {
         threadPool.submit {
             try {
-                println("Getting recipes for category $categoryId...")
                 val response = apiService.getRecipesByCategory(categoryId).execute()
-                println("Recipes response code: ${response.code()}")
-                println("Recipes response message: ${response.message()}")
                 val recipes = response.body()
-                println("Recipes received: ${recipes?.size ?: 0}")
-                recipes?.forEach { recipe ->
-                    println("Recipe: ${recipe.id} - ${recipe.title}")
-                }
                 callback(recipes)
             } catch (e: Exception) {
-                println("Error getting recipes for category $categoryId: ${e.message}")
                 e.printStackTrace()
                 callback(null)
             }
@@ -86,7 +69,7 @@ class RecipesRepository {
                 val recipe = response.body()
                 callback(recipe)
             } catch (e: Exception) {
-                println("Error getting recipe $recipeId: ${e.message}")
+                e.printStackTrace()
                 callback(null)
             }
         }
@@ -100,7 +83,7 @@ class RecipesRepository {
                 val recipes = response.body()
                 callback(recipes)
             } catch (e: Exception) {
-                println("Error getting recipes by ids: ${e.message}")
+                e.printStackTrace()
                 callback(null)
             }
         }
@@ -113,7 +96,7 @@ class RecipesRepository {
                 val recipes = response.body()
                 callback(recipes)
             } catch (e: Exception) {
-                println("Error searching recipes: ${e.message}")
+                e.printStackTrace()
                 callback(null)
             }
         }
@@ -127,7 +110,7 @@ class RecipesRepository {
                 val recipes = response.body()
                 callback(recipes)
             } catch (e: Exception) {
-                println("Error getting favorite recipes: ${e.message}")
+                e.printStackTrace()
                 callback(null)
             }
         }

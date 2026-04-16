@@ -14,62 +14,27 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
     private val _state = MutableStateFlow(CategoriesListState())
     val state: StateFlow<CategoriesListState> = _state.asStateFlow()
     
-    private val recipesRepository = RecipesRepository()
+    private val recipesRepository = RecipesRepository
 
     fun initialize() {
-        println("CategoriesListViewModel: initialize called")
         loadCategories()
     }
 
     fun loadCategories() {
-        try {
-            println("CategoriesListViewModel: Starting to load categories")
-            println("CategoriesListViewModel: Current thread: ${Thread.currentThread().name}")
-            
-            if (Thread.currentThread().name == "main") {
-                println("CategoriesListViewModel: WARNING - Called on main thread!")
+        _state.value = _state.value.copy(isLoading = true, error = null)
+        
+        recipesRepository.getCategories { categories ->
+            if (categories != null) {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    categories = categories
+                )
+            } else {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    error = "Ошибка получения данных"
+                )
             }
-            
-            _state.value = _state.value.copy(isLoading = true, error = null)
-            println("CategoriesListViewModel: State set to loading, calling repository")
-            
-            recipesRepository.getCategories { categories ->
-                try {
-                    println("CategoriesListViewModel: *** CALLBACK EXECUTED ***")
-                    println("CategoriesListViewModel: Callback received with categories: ${categories?.size ?: 0}")
-                    println("CategoriesListViewModel: Current thread: ${Thread.currentThread().name}")
-                    
-                    if (categories != null) {
-                        println("CategoriesListViewModel: Updating state with ${categories.size} categories")
-                        _state.value = _state.value.copy(
-                            isLoading = false,
-                            categories = categories
-                        )
-                        println("CategoriesListViewModel: State updated successfully")
-                    } else {
-                        println("CategoriesListViewModel: API failed, setting error state")
-                        _state.value = _state.value.copy(
-                            isLoading = false,
-                            error = "Ошибка получения данных"
-                        )
-                    }
-                } catch (e: Exception) {
-                    println("CategoriesListViewModel: Exception in callback: ${e.message}")
-                    e.printStackTrace()
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        error = "Внутренняя ошибка: ${e.message}"
-                    )
-                }
-            }
-            println("CategoriesListViewModel: Repository call submitted, waiting for callback...")
-        } catch (e: Exception) {
-            println("CategoriesListViewModel: Exception in loadCategories: ${e.message}")
-            e.printStackTrace()
-            _state.value = _state.value.copy(
-                isLoading = false,
-                error = "Ошибка загрузки: ${e.message}"
-            )
         }
     }
 
@@ -83,7 +48,6 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
     
     override fun onCleared() {
         super.onCleared()
-        recipesRepository.shutdown()
     }
 }
 

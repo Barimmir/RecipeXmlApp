@@ -12,7 +12,6 @@ import android.app.Application
 import android.graphics.drawable.Drawable
 import com.example.recipexmlapp.data.Recipe
 import com.example.recipexmlapp.data.RecipesRepository
-import android.widget.Toast
 
 data class RecipeDetailState(
     val recipe: Recipe? = null,
@@ -34,7 +33,7 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
     val state: LiveData<RecipeDetailState> = _state
     
     private val sharedPrefs = getApplication<Application>().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    private val recipesRepository = RecipesRepository()
+    private val recipesRepository = RecipesRepository
     
     init {
         Log.d("RecipeDetailVM", "ViewModel initialized")
@@ -51,7 +50,7 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
             
             if (recipe != null) {
                 val recipeImage = try {
-                    val inputStream = getApplication<Application>().assets.open(recipe.imageUrl ?: "")
+                    val inputStream = getApplication<Application>().assets.open(recipe.imageUrl)
                     val drawable = Drawable.createFromStream(inputStream, null)
                     drawable
                 } catch (e: Exception) {
@@ -71,7 +70,6 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
                     isLoading = false,
                     error = "Ошибка получения данных"
                 )
-                Toast.makeText(getApplication(), "Ошибка получения данных", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -120,7 +118,6 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
     
     override fun onCleared() {
         super.onCleared()
-        recipesRepository.shutdown()
     }
 }
 

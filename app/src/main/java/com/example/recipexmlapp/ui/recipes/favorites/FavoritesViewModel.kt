@@ -1,7 +1,6 @@
 package com.example.recipexmlapp.ui.recipes.favorites
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import com.example.recipexmlapp.data.RecipesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +14,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     val state: StateFlow<FavoritesState> = _state.asStateFlow()
     
     private val sharedPrefs = application.getSharedPreferences("recipe_favorites", Application.MODE_PRIVATE)
-    private val recipesRepository = RecipesRepository()
+    private val recipesRepository = RecipesRepository
     
     fun initialize() {
         loadFavoriteRecipes()
@@ -52,7 +51,6 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
                         error = "Ошибка получения данных",
                         isEmpty = true
                     )
-                    Toast.makeText(getApplication(), "Ошибка получения данных", Toast.LENGTH_SHORT).show()
                 }
             }
         } else {
@@ -87,6 +85,5 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     
     override fun onCleared() {
         super.onCleared()
-        recipesRepository.shutdown()
     }
 }
