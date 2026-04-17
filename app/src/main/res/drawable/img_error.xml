@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    
+    <!-- Background -->
+    <path
+        android:fillColor="#FFEBEE"
+        android:pathData="M20,20 L180,20 A16,16 0,0,1 196,36 L196,164 A16,16 0,0,1 180,180 L20,180 A16,16 0,0,1 4,164 L4,36 A16,16 0,0,1 20,20 Z"/>
+    
+    <!-- Error icon background -->
+    <circle
+        android:fillColor="#F44336"
+        android:cx="100"
+        android:cy="100"
+        android:r="40"/>
+    
+    <!-- X mark -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:pathData="M85,85 L115,115 M115,85 L85,115"/>
+</vector>

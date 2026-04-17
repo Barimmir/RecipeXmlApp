@@ -1,13 +1,14 @@
 package com.example.recipexmlapp.ui.categories
 
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.recipexmlapp.R
 import com.example.recipexmlapp.databinding.ItemCategoryBinding
 import com.example.recipexmlapp.data.Category
-import java.io.InputStream
+import com.example.recipexmlapp.data.ApiConstants
 
 class CategoriesListAdapter(private var dataSet: List<Category>) : 
     RecyclerView.Adapter<CategoriesListAdapter.ViewHolder>() {
@@ -44,14 +45,14 @@ class CategoriesListAdapter(private var dataSet: List<Category>) :
         holder.tvCategoryTitle.text = category.title
         holder.tvCategoryDescription.text = category.description
         
-        try {
-            val inputStream: InputStream = holder.itemView.context.assets.open(category.imageName)
-            val drawable = Drawable.createFromStream(inputStream, null)
-            holder.ivCategory.setImageDrawable(drawable)
-            inputStream.close()
-        } catch (e: Exception) {
-            Log.e("CategoriesListAdapter", "Error loading image from assets: ${category.imageName}", e)
-        }
+        val imageUrl = "${ApiConstants.IMAGE_BASE_URL}${category.imageName}"
+        
+        Glide.with(holder.itemView.context)
+            .load(imageUrl)
+            .placeholder(R.drawable.img_placeholder)
+            .error(R.drawable.img_error)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(holder.ivCategory)
         
         holder.itemView.setOnClickListener {
             itemClickListener?.onItemClick(category.id)
