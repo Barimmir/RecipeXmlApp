@@ -1,10 +1,12 @@
 package com.example.recipexmlapp.ui.categories
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.recipexmlapp.data.RecipesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import androidx.lifecycle.AndroidViewModel
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider
@@ -23,7 +25,8 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
     fun loadCategories() {
         _state.value = _state.value.copy(isLoading = true, error = null)
         
-        recipesRepository.getCategories { categories ->
+        viewModelScope.launch {
+            val categories = recipesRepository.getCategories()
             if (categories != null) {
                 _state.value = _state.value.copy(
                     isLoading = false,

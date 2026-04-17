@@ -2,10 +2,12 @@ package com.example.recipexmlapp.ui.recipes.favorites
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.recipexmlapp.data.RecipesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import androidx.core.content.edit
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
@@ -20,9 +22,9 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
         loadFavoriteRecipes()
     }
     
-    private fun getFavorites(): Set<String> {
+    private fun getFavorites(): MutableSet<String> {
         val savedFavorites: Set<String>? = sharedPrefs.getStringSet("favorites_set", emptySet())
-        return savedFavorites ?: emptySet()
+        return HashSet(savedFavorites ?: emptySet())
     }
     
     private fun saveFavorites(favoriteIds: Set<String>) {
@@ -37,8 +39,9 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
         val favoriteIds = getFavorites()
         val favoriteIdsInt = favoriteIds.mapNotNull { it.toIntOrNull() }.toSet()
         
-        if (favoriteIdsInt.isNotEmpty()) {
-            recipesRepository.getFavoriteRecipes(favoriteIdsInt) { recipes ->
+        viewModelScope.launch {
+            if (favoriteIdsInt.isNotEmpty()) {
+                val recipes = recipesRepository.getFavoriteRecipes(favoriteIdsInt)
                 if (recipes != null) {
                     _state.value = _state.value.copy(
                         isLoading = false,
@@ -52,13 +55,13 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
                         isEmpty = true
                     )
                 }
+            } else {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    favoriteRecipes = emptyList(),
+                    isEmpty = true
+                )
             }
-        } else {
-            _state.value = _state.value.copy(
-                isLoading = false,
-                favoriteRecipes = emptyList(),
-                isEmpty = true
-            )
         }
     }
     

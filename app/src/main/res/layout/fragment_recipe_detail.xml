@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/background_gray"
+    android:orientation="vertical"
     tools:context=".ui.recipes.recipe.RecipeDetailFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,25 +16,12 @@
             android:id="@+id/ivRecipeImage"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
             android:contentDescription="@string/content_description_recipe"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
-
-        <ImageButton
-            android:id="@+id/ibFavorite"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_heart_empty"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/add_to_favorites"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_heart" />
 
         <TextView
             android:id="@+id/tvRecipeTitle"
@@ -44,32 +31,26 @@
             android:layout_marginBottom="16dp"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/rounded_background"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary"
-            android:background="@drawable/rounded_background"
             app:layout_constraintBottom_toBottomOf="@id/ivRecipeImage"
             app:layout_constraintStart_toStartOf="@id/ivRecipeImage"
             tools:text="Recipe Title" />
 
-        <TextView
-            android:id="@+id/tvRecipeDescription"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+        <ImageButton
+            android:id="@+id/ibFavorite"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="8dp"
-            android:textSize="14sp"
-            android:textColor="?android:attr/textColorSecondary"
-            android:background="@drawable/rounded_background"
-            android:maxLines="3"
-            android:ellipsize="end"
-            app:layout_constraintBottom_toBottomOf="@id/ivRecipeImage"
-            app:layout_constraintStart_toStartOf="@id/ivRecipeImage"
-            app:layout_constraintEnd_toStartOf="@id/ibFavorite"
-            tools:text="Recipe description goes here" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/add_to_favorites"
+            android:src="@drawable/ic_heart_empty"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_heart" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -87,37 +68,37 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/ingredients"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                android:text="@string/ingredients"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/portions"
-                    android:textSize="16sp"
-                    android:layout_marginEnd="8dp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tvPortions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
                     android:text="@string/default_portions"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="12dp" />
+                    android:textStyle="bold" />
 
                 <SeekBar
                     android:id="@+id/seekBarPortions"
@@ -133,10 +114,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp"
                 android:layout_margin="8dp"
-                android:background="@drawable/rounded_background">
+                android:background="@drawable/rounded_background"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvIngredients"
@@ -149,20 +130,20 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/cooking_method"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                android:text="@string/cooking_method"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp"
                 android:layout_margin="8dp"
-                android:background="@drawable/rounded_background">
+                android:background="@drawable/rounded_background"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvMethod"
