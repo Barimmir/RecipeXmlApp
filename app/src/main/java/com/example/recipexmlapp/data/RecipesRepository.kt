@@ -10,32 +10,32 @@ import retrofit2.create
 import java.util.concurrent.Executors
 
 object RecipesRepository {
-    
+
     private val json = Json { ignoreUnknownKeys = true }
-    
+
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
-    
+
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .build()
-    
+
     private val retrofit = Retrofit.Builder()
         .client(okHttpClient)
-        .baseUrl("https://recipes.androidsprint.ru/api/")
+        .baseUrl(ApiConstants.BASE_URL)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
-    
+
     private val apiService = retrofit.create<RecipeApiService>()
-    
+
     private val threadPool = Executors.newFixedThreadPool(10)
-    
+
     fun getCategories(callback: (List<Category>?) -> Unit) {
         threadPool.submit {
             try {
                 val response = apiService.getCategories().execute()
-                
+
                 if (response.isSuccessful()) {
                     val categories = response.body()
                     callback(categories)
@@ -48,7 +48,7 @@ object RecipesRepository {
             }
         }
     }
-    
+
     fun getRecipesByCategory(categoryId: Int, callback: (List<Recipe>?) -> Unit) {
         threadPool.submit {
             try {
@@ -61,7 +61,7 @@ object RecipesRepository {
             }
         }
     }
-    
+
     fun getRecipeById(recipeId: Int, callback: (Recipe?) -> Unit) {
         threadPool.submit {
             try {
@@ -74,7 +74,7 @@ object RecipesRepository {
             }
         }
     }
-    
+
     fun getRecipesByIds(ids: Set<Int>, callback: (List<Recipe>?) -> Unit) {
         threadPool.submit {
             try {
@@ -88,7 +88,7 @@ object RecipesRepository {
             }
         }
     }
-    
+
     fun searchRecipes(query: String, callback: (List<Recipe>?) -> Unit) {
         threadPool.submit {
             try {
@@ -101,7 +101,7 @@ object RecipesRepository {
             }
         }
     }
-    
+
     fun getFavoriteRecipes(ids: Set<Int>, callback: (List<Recipe>?) -> Unit) {
         threadPool.submit {
             try {
@@ -115,7 +115,7 @@ object RecipesRepository {
             }
         }
     }
-    
+
     fun shutdown() {
         threadPool.shutdown()
     }

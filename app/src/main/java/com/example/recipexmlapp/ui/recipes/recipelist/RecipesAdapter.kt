@@ -1,12 +1,14 @@
 package com.example.recipexmlapp.ui.recipes.recipelist
 
 import com.example.recipexmlapp.R
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.recipexmlapp.databinding.ItemRecipeCardBinding
 import com.example.recipexmlapp.data.Recipe
+import com.example.recipexmlapp.data.ApiConstants
 
 class RecipesAdapter(
     private var recipes: List<Recipe>,
@@ -36,16 +38,16 @@ class RecipesAdapter(
 
         fun bind(recipe: Recipe) {
             binding.tvRecipeTitle.text = recipe.title
-
             binding.tvRecipeDescription.text = recipe.description
 
-            try {
-                val inputStream = binding.root.context.assets.open(recipe.imageUrl)
-                val drawable = Drawable.createFromStream(inputStream, null)
-                binding.ivRecipeImage.setImageDrawable(drawable)
-            } catch (e: Exception) {
-                binding.ivRecipeImage.setImageResource(R.drawable.ic_placeholder_image)
-            }
+            val imageUrl = "${ApiConstants.IMAGE_BASE_URL}${recipe.imageUrl}"
+
+            Glide.with(binding.root.context)
+                .load(imageUrl)
+                .placeholder(R.drawable.img_placeholder)
+                .error(R.drawable.img_error)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(binding.ivRecipeImage)
 
             binding.root.setOnClickListener {
                 onRecipeClick(recipe.id)

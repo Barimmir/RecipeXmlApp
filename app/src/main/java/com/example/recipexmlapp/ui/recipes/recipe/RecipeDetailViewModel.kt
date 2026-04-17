@@ -9,9 +9,9 @@ import android.util.Log
 import android.content.Context
 import androidx.core.content.edit
 import android.app.Application
-import android.graphics.drawable.Drawable
 import com.example.recipexmlapp.data.Recipe
 import com.example.recipexmlapp.data.RecipesRepository
+import com.example.recipexmlapp.data.ApiConstants
 
 data class RecipeDetailState(
     val recipe: Recipe? = null,
@@ -19,7 +19,7 @@ data class RecipeDetailState(
     val isFavorite: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val recipeImage: Drawable? = null
+    val recipeImageUrl: String? = null
 )
 
 class RecipeDetailViewModel(application: Application) : AndroidViewModel(application) {
@@ -49,21 +49,14 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
             val currentPortionsCount = _state.value?.portionsCount ?: 1
             
             if (recipe != null) {
-                val recipeImage = try {
-                    val inputStream = getApplication<Application>().assets.open(recipe.imageUrl)
-                    val drawable = Drawable.createFromStream(inputStream, null)
-                    drawable
-                } catch (e: Exception) {
-                    Log.e("RecipeDetailVM", "Error loading recipe image", e)
-                    null
-                }
+                val recipeImageUrl = "${ApiConstants.IMAGE_BASE_URL}${recipe.imageUrl}"
                 
                 _state.value = _state.value?.copy(
                     recipe = recipe,
                     isFavorite = isFavorite,
                     portionsCount = currentPortionsCount,
                     isLoading = false,
-                    recipeImage = recipeImage
+                    recipeImageUrl = recipeImageUrl
                 )
             } else {
                 _state.value = _state.value?.copy(

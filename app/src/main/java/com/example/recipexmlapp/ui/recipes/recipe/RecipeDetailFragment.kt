@@ -17,6 +17,8 @@ import com.example.recipexmlapp.R
 import com.example.recipexmlapp.adapter.IngredientsAdapter
 import com.example.recipexmlapp.adapter.MethodAdapter
 import com.google.android.material.divider.MaterialDividerItemDecoration
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import android.widget.SeekBar.OnSeekBarChangeListener
 
 class PortionSeekBarListener(val onChangeIngredients: (Int) -> Unit) : OnSeekBarChangeListener {
@@ -107,7 +109,14 @@ class RecipeDetailFragment : Fragment() {
 
                 tvRecipeDescription.text = recipe.description
 
-                ivRecipeImage.setImageDrawable(state.recipeImage)
+                state.recipeImageUrl?.let { imageUrl ->
+                    Glide.with(requireContext())
+                        .load(imageUrl)
+                        .placeholder(R.drawable.img_placeholder)
+                        .error(R.drawable.img_error)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(ivRecipeImage)
+                }
 
                 ingredientsAdapter.updateIngredients(recipe.ingredients)
                 ingredientsAdapter.updatePortions(state.portionsCount)
