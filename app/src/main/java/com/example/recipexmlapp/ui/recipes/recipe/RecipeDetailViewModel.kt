@@ -3,12 +3,14 @@ package com.example.recipexmlapp.ui.recipes.recipe
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import android.util.Log
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.viewModelScope
 import android.content.Context
 import androidx.core.content.edit
 import android.app.Application
+import kotlinx.coroutines.launch
 import com.example.recipexmlapp.data.Recipe
 import com.example.recipexmlapp.data.RecipesRepository
 import com.example.recipexmlapp.data.ApiConstants
@@ -29,29 +31,29 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
         private const val FAVORITES_KEY = "favorites_set"
     }
     
-    private val _state = MutableLiveData<RecipeDetailState>()
-    val state: LiveData<RecipeDetailState> = _state
+    private val _state = MutableStateFlow(RecipeDetailState())
+    val state: StateFlow<RecipeDetailState> = _state.asStateFlow()
     
     private val sharedPrefs = getApplication<Application>().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val recipesRepository = RecipesRepository
     
     init {
-        Log.d("RecipeDetailVM", "ViewModel initialized")
         _state.value = RecipeDetailState()
     }
     
     fun loadRecipe(id: Int) {
-        _state.value = _state.value?.copy(isLoading = true)
+        _state.value = _state.value.copy(isLoading = true)
         
-        recipesRepository.getRecipeById(id) { recipe ->
+        viewModelScope.launch {
+            val recipe = recipesRepository.getRecipeById(id)
             val favorites = getFavorites()
             val isFavorite = favorites.contains(id.toString())
-            val currentPortionsCount = _state.value?.portionsCount ?: 1
+            val currentPortionsCount = _state.value.portionsCount
             
             if (recipe != null) {
                 val recipeImageUrl = "${ApiConstants.IMAGE_BASE_URL}${recipe.imageUrl}"
                 
-                _state.value = _state.value?.copy(
+                _state.value = _state.value.copy(
                     recipe = recipe,
                     isFavorite = isFavorite,
                     portionsCount = currentPortionsCount,
@@ -59,7 +61,7 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
                     recipeImageUrl = recipeImageUrl
                 )
             } else {
-                _state.value = _state.value?.copy(
+                _state.value = _state.value.copy(
                     isLoading = false,
                     error = "Ошибка получения данных"
                 )
@@ -79,7 +81,7 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
     }
     
     fun onFavoritesClicked() {
-        val currentState = _state.value ?: return
+        val currentState = _state.value
         val recipe = currentState.recipe ?: return
         
         val favorites = getFavorites()
@@ -98,15 +100,15 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
     }
     
     fun updatePortions(portions: Int) {
-        _state.value = _state.value?.copy(portionsCount = portions)
+        _state.value = _state.value.copy(portionsCount = portions)
     }
     
     fun setLoading(isLoading: Boolean) {
-        _state.value = _state.value?.copy(isLoading = isLoading)
+        _state.value = _state.value.copy(isLoading = isLoading)
     }
     
     fun setError(error: String?) {
-        _state.value = _state.value?.copy(error = error)
+        _state.value = _state.value.copy(error = error)
     }
     
     override fun onCleared() {

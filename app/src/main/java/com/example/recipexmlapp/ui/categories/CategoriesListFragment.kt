@@ -19,7 +19,9 @@ class CategoriesListFragment : Fragment() {
     private var _binding: FragmentListCategoriesBinding? = null
     private val binding get() = _binding!!
     
-    private val viewModel: CategoriesListViewModel by viewModels()
+    private val viewModel: CategoriesListViewModel by viewModels {
+        CategoriesListViewModelFactory(requireActivity().application)
+    }
     private lateinit var categoriesAdapter: CategoriesListAdapter
     
     override fun onCreateView(
@@ -51,11 +53,11 @@ class CategoriesListFragment : Fragment() {
     private fun updateUI(state: CategoriesListState) {
         
         if (state.isLoading) {
-            // TODO: Show loading indicator
+            // Loading state
         }
         
         state.error?.let {
-            // TODO: Show error message
+            // Error state
         }
         
         categoriesAdapter.updateCategories(state.categories)

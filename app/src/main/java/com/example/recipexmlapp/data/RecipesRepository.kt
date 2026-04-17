@@ -7,7 +7,8 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.create
-import java.util.concurrent.Executors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object RecipesRepository {
 
@@ -29,94 +30,55 @@ object RecipesRepository {
 
     private val apiService = retrofit.create<RecipeApiService>()
 
-    private val threadPool = Executors.newFixedThreadPool(10)
 
-    fun getCategories(callback: (List<Category>?) -> Unit) {
-        threadPool.submit {
-            try {
-                val response = apiService.getCategories().execute()
+    suspend fun getCategories(): List<Category>? {
+        return try {
+            withContext(Dispatchers.IO) {
+                apiService.getCategories()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 
-                if (response.isSuccessful()) {
-                    val categories = response.body()
-                    callback(categories)
-                } else {
-                    callback(null)
+    suspend fun getRecipesByCategory(categoryId: Int): List<Recipe>? {
+        return try {
+            withContext(Dispatchers.IO) {
+                apiService.getRecipesByCategory(categoryId)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun getRecipeById(recipeId: Int): Recipe? {
+        return try {
+            withContext(Dispatchers.IO) {
+                apiService.getRecipeById(recipeId)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    
+    suspend fun getFavoriteRecipes(ids: Set<Int>): List<Recipe>? {
+        return try {
+            withContext(Dispatchers.IO) {
+                val recipes = mutableListOf<Recipe>()
+                for (id in ids) {
+                    val recipe = apiService.getRecipeById(id)
+                    recipes.add(recipe)
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                callback(null)
+                recipes
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
-    fun getRecipesByCategory(categoryId: Int, callback: (List<Recipe>?) -> Unit) {
-        threadPool.submit {
-            try {
-                val response = apiService.getRecipesByCategory(categoryId).execute()
-                val recipes = response.body()
-                callback(recipes)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                callback(null)
-            }
-        }
-    }
-
-    fun getRecipeById(recipeId: Int, callback: (Recipe?) -> Unit) {
-        threadPool.submit {
-            try {
-                val response = apiService.getRecipeById(recipeId).execute()
-                val recipe = response.body()
-                callback(recipe)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                callback(null)
-            }
-        }
-    }
-
-    fun getRecipesByIds(ids: Set<Int>, callback: (List<Recipe>?) -> Unit) {
-        threadPool.submit {
-            try {
-                val idsString = ids.joinToString(",")
-                val response = apiService.getRecipesByIds(idsString).execute()
-                val recipes = response.body()
-                callback(recipes)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                callback(null)
-            }
-        }
-    }
-
-    fun searchRecipes(query: String, callback: (List<Recipe>?) -> Unit) {
-        threadPool.submit {
-            try {
-                val response = apiService.searchRecipes(query).execute()
-                val recipes = response.body()
-                callback(recipes)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                callback(null)
-            }
-        }
-    }
-
-    fun getFavoriteRecipes(ids: Set<Int>, callback: (List<Recipe>?) -> Unit) {
-        threadPool.submit {
-            try {
-                val idsString = ids.joinToString(",")
-                val response = apiService.getFavoriteRecipes(idsString).execute()
-                val recipes = response.body()
-                callback(recipes)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                callback(null)
-            }
-        }
-    }
-
-    fun shutdown() {
-        threadPool.shutdown()
-    }
 }

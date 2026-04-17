@@ -15,15 +15,15 @@ import com.example.recipexmlapp.ui.recipes.recipelist.RecipesAdapter
 import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment() {
-    
+
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
-    
+
     private val viewModel: FavoritesViewModel by viewModels {
         ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
     }
     private lateinit var recipesAdapter: RecipesAdapter
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,16 +32,16 @@ class FavoritesFragment : Fragment() {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         initRecyclerView()
         observeViewModel()
-        
+
         viewModel.initialize()
     }
-    
+
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.state.collect { state ->
@@ -49,16 +49,16 @@ class FavoritesFragment : Fragment() {
             }
         }
     }
-    
+
     private fun updateUI(state: FavoritesState) {
         if (state.isLoading) {
-            // TODO: Show loading indicator
+            // Loading state
         }
-        
+
         state.error?.let {
-            // TODO: Show error message
+            // Error state
         }
-        
+
         if (state.isEmpty) {
             binding.rvFavorites.visibility = View.GONE
             binding.tvEmptyState.visibility = View.VISIBLE
@@ -68,31 +68,30 @@ class FavoritesFragment : Fragment() {
             recipesAdapter.updateRecipes(state.favoriteRecipes)
         }
     }
-    
+
     private fun initRecyclerView() {
         recipesAdapter = RecipesAdapter(emptyList()) { recipeId ->
             openRecipeByRecipeId(recipeId)
         }
-        
+
         binding.rvFavorites.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = recipesAdapter
         }
-        
-        // Настройка кнопки возврата к категориям
+
         binding.ibBackToCategories.setOnClickListener {
             val action = FavoritesFragmentDirections
                 .actionFavoritesFragmentToCategoriesListFragment()
             findNavController().navigate(action)
         }
     }
-    
+
     private fun openRecipeByRecipeId(recipeId: Int) {
         val action = FavoritesFragmentDirections
             .actionFavoritesFragmentToRecipeDetailFragment(recipeId)
         findNavController().navigate(action)
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

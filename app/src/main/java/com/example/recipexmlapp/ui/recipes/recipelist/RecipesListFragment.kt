@@ -21,7 +21,9 @@ class RecipesListFragment : Fragment() {
     private var _binding: FragmentRecipesListBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: RecipesListViewModel by viewModels()
+    private val viewModel: RecipesListViewModel by viewModels {
+        RecipesListViewModelFactory(requireActivity().application)
+    }
     private lateinit var recipesAdapter: RecipesAdapter
 
     override fun onCreateView(
@@ -54,11 +56,11 @@ class RecipesListFragment : Fragment() {
         setupHeader(state.categoryName, state.categoryImageUrl)
         
         if (state.isLoading) {
-            // TODO: Show loading indicator
+            // Loading state
         }
         
         state.error?.let {
-            // TODO: Show error message
+            // Error state
         }
         
         recipesAdapter.updateRecipes(state.recipes)

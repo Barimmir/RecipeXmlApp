@@ -20,6 +20,8 @@ import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class PortionSeekBarListener(val onChangeIngredients: (Int) -> Unit) : OnSeekBarChangeListener {
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -43,8 +45,7 @@ class RecipeDetailFragment : Fragment() {
     private var recipeId: Int = 0
     private lateinit var ivRecipeImage: ImageView
     private lateinit var tvRecipeTitle: TextView
-    private lateinit var tvRecipeDescription: TextView
-    private lateinit var tvPortions: TextView
+        private lateinit var tvPortions: TextView
     private lateinit var seekBarPortions: SeekBar
     private lateinit var ibFavorite: ImageButton
     private lateinit var rvIngredients: RecyclerView
@@ -78,7 +79,6 @@ class RecipeDetailFragment : Fragment() {
     private fun initUI(view: View) {
         ivRecipeImage = view.findViewById(R.id.ivRecipeImage)
         tvRecipeTitle = view.findViewById(R.id.tvRecipeTitle)
-        tvRecipeDescription = view.findViewById(R.id.tvRecipeDescription)
         tvPortions = view.findViewById(R.id.tvPortions)
         seekBarPortions = view.findViewById(R.id.seekBarPortions)
         ibFavorite = view.findViewById(R.id.ibFavorite)
@@ -101,14 +101,12 @@ class RecipeDetailFragment : Fragment() {
             MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
         rvMethod.addItemDecoration(methodDivider)
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.state.collect { state ->
             state.recipe?.let { recipe ->
-                tvRecipeTitle.text = recipe.title.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase() else it.toString()
-                }
+                tvRecipeTitle.text = recipe.title
 
-                tvRecipeDescription.text = recipe.description
-
+                
                 state.recipeImageUrl?.let { imageUrl ->
                     Glide.with(requireContext())
                         .load(imageUrl)
@@ -121,19 +119,20 @@ class RecipeDetailFragment : Fragment() {
                 ingredientsAdapter.updateIngredients(recipe.ingredients)
                 ingredientsAdapter.updatePortions(state.portionsCount)
                 methodAdapter.updateMethod(recipe.method)
-            }
+                
+                tvPortions.text = state.portionsCount.toString()
+                seekBarPortions.progress = state.portionsCount - 1
 
-            tvPortions.text = state.portionsCount.toString()
-            seekBarPortions.progress = state.portionsCount - 1
-
-            if (state.isFavorite) {
-                ibFavorite.setImageResource(R.drawable.ic_heart)
-            } else {
-                ibFavorite.setImageResource(R.drawable.ic_heart_empty)
+                if (state.isFavorite) {
+                    ibFavorite.setImageResource(R.drawable.ic_heart)
+                } else {
+                    ibFavorite.setImageResource(R.drawable.ic_heart_empty)
+                }
             }
         }
+    }
 
-        ibFavorite.setOnClickListener {
+    ibFavorite.setOnClickListener {
             viewModel.onFavoritesClicked()
         }
 
