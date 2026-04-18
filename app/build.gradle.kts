@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.kotlin.serialization)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -47,6 +48,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
