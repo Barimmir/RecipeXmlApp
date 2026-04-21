@@ -15,14 +15,17 @@ import kotlinx.coroutines.withContext
 object RecipesRepository {
     private var appDatabase: AppDatabase? = null
     private var categoriesDao: CategoriesDao? = null
+    private var recipesDao: RecipesDao? = null
 
     fun initialize(context: Context) {
         if (appDatabase == null) {
             appDatabase = Room.databaseBuilder(
-                context,
-                AppDatabase::class.java, "recipe_database"
-            ).build()
+                        context,
+                        AppDatabase::class.java, "recipe_database"
+                    ).fallbackToDestructiveMigration(false)
+                .build()
             categoriesDao = appDatabase?.categoriesDao()
+            recipesDao = appDatabase?.recipesDao()
         }
     }
 
@@ -38,6 +41,32 @@ object RecipesRepository {
     suspend fun saveCategoriesToCache(categories: List<Category>) {
         try {
             categoriesDao?.addCategories(categories)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun getRecipesFromCache(): List<Recipe>? {
+        return try {
+            recipesDao?.getAllRecipes()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun getRecipesByCategoryFromCache(categoryId: Int): List<Recipe>? {
+        return try {
+            recipesDao?.getRecipesByCategory(categoryId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun saveRecipesToCache(recipes: List<Recipe>) {
+        try {
+            recipesDao?.addRecipes(recipes)
         } catch (e: Exception) {
             e.printStackTrace()
         }

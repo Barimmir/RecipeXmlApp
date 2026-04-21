@@ -15,7 +15,7 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
 
     private val _state = MutableStateFlow(RecipesListState())
     val state: StateFlow<RecipesListState> = _state.asStateFlow()
-    
+
     private val recipesRepository = RecipesRepository
 
     fun initialize(categoryId: Int?, categoryName: String?, categoryImageUrl: String?) {
@@ -29,17 +29,26 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
 
     fun loadRecipes() {
         _state.value = _state.value.copy(isLoading = true, error = null)
-        
+
         val categoryId = _state.value.categoryId
         if (categoryId != null) {
             viewModelScope.launch {
-                val recipes = recipesRepository.getRecipesByCategory(categoryId)
-                if (recipes != null) {
+                val cachedRecipes = recipesRepository.getRecipesByCategoryFromCache(categoryId)
+                if (cachedRecipes != null && cachedRecipes.isNotEmpty()) {
                     _state.value = _state.value.copy(
                         isLoading = false,
-                        recipes = recipes
+                        recipes = cachedRecipes
                     )
-                } else {
+                }
+                val recipes = recipesRepository.getRecipesByCategory(categoryId)
+                if (recipes != null) {
+                    val recipesWithCategoryId = recipes.map { it.copy(categoryId = categoryId) }
+                    recipesRepository.saveRecipesToCache(recipesWithCategoryId)
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        recipes = recipesWithCategoryId
+                    )
+                } else if (cachedRecipes.isNullOrEmpty()) {
                     _state.value = _state.value.copy(
                         isLoading = false,
                         error = "Ошибка получения данных"
@@ -61,13 +70,14 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
     fun clearError() {
         _state.value = _state.value.copy(error = null)
     }
-    
+
     override fun onCleared() {
         super.onCleared()
     }
 }
 
-class RecipesListViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+class RecipesListViewModelFactory(private val application: Application) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RecipesListViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
