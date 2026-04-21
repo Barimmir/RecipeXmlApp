@@ -42,13 +42,11 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
             
             if (recipe != null) {
                 val recipeImageUrl = "${ApiConstants.IMAGE_BASE_URL}${recipe.imageUrl}"
-                val recipeWithCategory = recipe.copy(categoryId = 0)
-                recipesRepository.saveRecipesToCache(listOf(recipeWithCategory))
                 val favoriteRecipes = recipesRepository.getFavoriteRecipesFromCache()
                 val isFavorite = favoriteRecipes?.any { it.id == id } ?: false
                 
                 _state.value = _state.value.copy(
-                    recipe = recipeWithCategory,
+                    recipe = recipe,
                     isFavorite = isFavorite,
                     portionsCount = currentPortionsCount,
                     isLoading = false,
