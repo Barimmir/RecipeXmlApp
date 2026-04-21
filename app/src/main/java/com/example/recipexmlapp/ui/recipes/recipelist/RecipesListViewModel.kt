@@ -67,6 +67,22 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
         loadRecipes()
     }
 
+    fun toggleFavorite(recipeId: Int) {
+        viewModelScope.launch {
+            val currentRecipes = _state.value.recipes
+            val recipe = currentRecipes.find { it.id == recipeId }
+            
+            if (recipe != null) {
+                if (recipe.isFavorite) {
+                    recipesRepository.removeFromFavorites(recipeId)
+                } else {
+                    recipesRepository.addToFavorites(recipeId)
+                }
+                loadRecipes()
+            }
+        }
+    }
+
     fun clearError() {
         _state.value = _state.value.copy(error = null)
     }
