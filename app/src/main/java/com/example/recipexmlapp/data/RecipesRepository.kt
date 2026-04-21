@@ -72,6 +72,31 @@ object RecipesRepository {
         }
     }
 
+    suspend fun getFavoriteRecipesFromCache(): List<Recipe>? {
+        return try {
+            recipesDao?.getFavoriteRecipes()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun addToFavorites(recipeId: Int) {
+        try {
+            recipesDao?.updateFavoriteStatus(recipeId, true)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun removeFromFavorites(recipeId: Int) {
+        try {
+            recipesDao?.updateFavoriteStatus(recipeId, false)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private val json = Json { ignoreUnknownKeys = true }
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {

@@ -39,6 +39,7 @@
             android:maxLines="2"
             android:ellipsize="end" />
 
+        
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

@@ -56,11 +56,9 @@ class RecipesListFragment : Fragment() {
         setupHeader(state.categoryName, state.categoryImageUrl)
         
         if (state.isLoading) {
-            // Loading state
         }
         
         state.error?.let {
-            // Error state
         }
         
         recipesAdapter.updateRecipes(state.recipes)

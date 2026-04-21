@@ -7,8 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
-import android.content.Context
-import androidx.core.content.edit
 import android.app.Application
 import kotlinx.coroutines.launch
 import com.example.recipexmlapp.data.Recipe
@@ -26,15 +24,9 @@ data class RecipeDetailState(
 
 class RecipeDetailViewModel(application: Application) : AndroidViewModel(application) {
     
-    companion object {
-        private const val PREFS_NAME = "recipe_favorites"
-        private const val FAVORITES_KEY = "favorites_set"
-    }
-    
     private val _state = MutableStateFlow(RecipeDetailState())
     val state: StateFlow<RecipeDetailState> = _state.asStateFlow()
     
-    private val sharedPrefs = getApplication<Application>().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val recipesRepository = RecipesRepository
     
     init {
@@ -46,12 +38,12 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
         
         viewModelScope.launch {
             val recipe = recipesRepository.getRecipeById(id)
-            val favorites = getFavorites()
-            val isFavorite = favorites.contains(id.toString())
             val currentPortionsCount = _state.value.portionsCount
             
             if (recipe != null) {
                 val recipeImageUrl = "${ApiConstants.IMAGE_BASE_URL}${recipe.imageUrl}"
+                val favoriteRecipes = recipesRepository.getFavoriteRecipesFromCache()
+                val isFavorite = favoriteRecipes?.any { it.id == id } ?: false
                 
                 _state.value = _state.value.copy(
                     recipe = recipe,
@@ -69,34 +61,21 @@ class RecipeDetailViewModel(application: Application) : AndroidViewModel(applica
         }
     }
     
-    private fun getFavorites(): MutableSet<String> {
-        val savedFavorites: Set<String>? = sharedPrefs.getStringSet(FAVORITES_KEY, emptySet())
-        return HashSet(savedFavorites ?: emptySet())
-    }
-    
-    private fun saveFavorites(favorites: Set<String>) {
-        sharedPrefs.edit {
-            putStringSet(FAVORITES_KEY, favorites)
-        }
-    }
-    
     fun onFavoritesClicked() {
         val currentState = _state.value
         val recipe = currentState.recipe ?: return
         
-        val favorites = getFavorites()
-        val recipeIdString = recipe.id.toString()
-        val newIsFavorite = !currentState.isFavorite
-        
-        if (newIsFavorite) {
-            favorites.add(recipeIdString)
-        } else {
-            favorites.remove(recipeIdString)
+        viewModelScope.launch {
+            val newIsFavorite = !currentState.isFavorite
+            
+            if (newIsFavorite) {
+                recipesRepository.addToFavorites(recipe.id)
+            } else {
+                recipesRepository.removeFromFavorites(recipe.id)
+            }
+            
+            _state.value = currentState.copy(isFavorite = newIsFavorite)
         }
-        
-        saveFavorites(favorites)
-        
-        _state.value = currentState.copy(isFavorite = newIsFavorite)
     }
     
     fun updatePortions(portions: Int) {
