@@ -41,7 +41,7 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
                     categories = categories
                 )
 
-            } else if (cachedCategories == null) {
+            } else if (cachedCategories.isNullOrEmpty()) {
                 _state.value = _state.value.copy(
                     isLoading = false,
                     error = "Ошибка получения данных"
