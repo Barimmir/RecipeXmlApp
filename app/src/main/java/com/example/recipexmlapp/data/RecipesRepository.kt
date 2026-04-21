@@ -1,5 +1,7 @@
 package com.example.recipexmlapp.data
 
+import android.content.Context
+import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -11,6 +13,35 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object RecipesRepository {
+    private var appDatabase: AppDatabase? = null
+    private var categoriesDao: CategoriesDao? = null
+
+    fun initialize(context: Context) {
+        if (appDatabase == null) {
+            appDatabase = Room.databaseBuilder(
+                context,
+                AppDatabase::class.java, "recipe_database"
+            ).build()
+            categoriesDao = appDatabase?.categoriesDao()
+        }
+    }
+
+    suspend fun getCategoriesFromCache(): List<Category>? {
+        return try {
+            categoriesDao?.getAllCategories()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun saveCategoriesToCache(categories: List<Category>) {
+        try {
+            categoriesDao?.addCategories(categories)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -29,8 +60,6 @@ object RecipesRepository {
         .build()
 
     private val apiService = retrofit.create<RecipeApiService>()
-
-
     suspend fun getCategories(): List<Category>? {
         return try {
             withContext(Dispatchers.IO) {
@@ -64,7 +93,7 @@ object RecipesRepository {
         }
     }
 
-    
+
     suspend fun getFavoriteRecipes(ids: Set<Int>): List<Recipe>? {
         return try {
             withContext(Dispatchers.IO) {

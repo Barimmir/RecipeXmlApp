@@ -15,7 +15,7 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
 
     private val _state = MutableStateFlow(CategoriesListState())
     val state: StateFlow<CategoriesListState> = _state.asStateFlow()
-    
+
     private val recipesRepository = RecipesRepository
 
     fun initialize() {
@@ -24,15 +24,24 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
 
     fun loadCategories() {
         _state.value = _state.value.copy(isLoading = true, error = null)
-        
+
         viewModelScope.launch {
+            val cachedCategories = recipesRepository.getCategoriesFromCache()
+            if (cachedCategories != null && cachedCategories.isNotEmpty()) {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    categories = cachedCategories
+                )
+            }
             val categories = recipesRepository.getCategories()
             if (categories != null) {
+                recipesRepository.saveCategoriesToCache(categories)
                 _state.value = _state.value.copy(
                     isLoading = false,
                     categories = categories
                 )
-            } else {
+
+            } else if (cachedCategories.isNullOrEmpty()) {
                 _state.value = _state.value.copy(
                     isLoading = false,
                     error = "Ошибка получения данных"
@@ -48,13 +57,14 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
     fun clearError() {
         _state.value = _state.value.copy(error = null)
     }
-    
+
     override fun onCleared() {
         super.onCleared()
     }
 }
 
-class CategoriesListViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+class CategoriesListViewModelFactory(private val application: Application) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CategoriesListViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
