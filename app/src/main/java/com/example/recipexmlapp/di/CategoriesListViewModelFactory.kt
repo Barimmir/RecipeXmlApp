@@ -7,7 +7,7 @@ import com.example.recipexmlapp.data.RecipesRepository
 
 class CategoriesListViewModelFactory(
     private val recipesRepository: RecipesRepository
-) : ViewModelProvider.Factory {
+) : ViewModelProvider.Factory, Factory<CategoriesListViewModel> {
     
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CategoriesListViewModel::class.java)) {
@@ -15,5 +15,9 @@ class CategoriesListViewModelFactory(
             return CategoriesListViewModel(recipesRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
+    }
+    
+    override fun create(): CategoriesListViewModel {
+        return CategoriesListViewModel(recipesRepository)
     }
 }

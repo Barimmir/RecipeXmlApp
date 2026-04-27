@@ -9,7 +9,7 @@ import android.app.Application
 class RecipesListViewModelFactory(
     private val repository: RecipesRepository,
     private val application: Application
-) : ViewModelProvider.Factory {
+) : ViewModelProvider.Factory, Factory<RecipesListViewModel> {
     
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RecipesListViewModel::class.java)) {
@@ -17,5 +17,9 @@ class RecipesListViewModelFactory(
             return RecipesListViewModel(repository, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
+    }
+    
+    override fun create(): RecipesListViewModel {
+        return RecipesListViewModel(repository, application)
     }
 }

@@ -9,7 +9,7 @@ import android.app.Application
 class FavoritesViewModelFactory(
     private val repository: RecipesRepository,
     private val application: Application
-) : ViewModelProvider.Factory {
+) : ViewModelProvider.Factory, Factory<FavoritesViewModel> {
     
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(FavoritesViewModel::class.java)) {
@@ -17,5 +17,9 @@ class FavoritesViewModelFactory(
             return FavoritesViewModel(repository, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
+    }
+    
+    override fun create(): FavoritesViewModel {
+        return FavoritesViewModel(repository, application)
     }
 }
