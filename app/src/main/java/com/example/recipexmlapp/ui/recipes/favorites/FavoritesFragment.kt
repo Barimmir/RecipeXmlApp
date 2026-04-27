@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipexmlapp.databinding.FragmentFavoritesBinding
 import com.example.recipexmlapp.ui.recipes.recipelist.RecipesAdapter
+import com.example.recipexmlapp.RecipeApplication
 import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment() {
@@ -20,7 +20,8 @@ class FavoritesFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FavoritesViewModel by viewModels {
-        ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        val app = requireActivity().application as RecipeApplication
+        app.appContainer.favoritesViewModelFactory
     }
     private lateinit var recipesAdapter: RecipesAdapter
 

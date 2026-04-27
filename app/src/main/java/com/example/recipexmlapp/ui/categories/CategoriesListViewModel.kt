@@ -7,16 +7,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import androidx.lifecycle.AndroidViewModel
-import android.app.Application
-import androidx.lifecycle.ViewModelProvider
 
-class CategoriesListViewModel(application: Application) : AndroidViewModel(application) {
+class CategoriesListViewModel(
+    private val repository: RecipesRepository,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(CategoriesListState())
     val state: StateFlow<CategoriesListState> = _state.asStateFlow()
-
-    private val recipesRepository = RecipesRepository
 
     fun initialize() {
         loadCategories()
@@ -26,16 +23,16 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
         _state.value = _state.value.copy(isLoading = true, error = null)
 
         viewModelScope.launch {
-            val cachedCategories = recipesRepository.getCategoriesFromCache()
+            val cachedCategories = repository.getCategoriesFromCache()
             if (cachedCategories != null && cachedCategories.isNotEmpty()) {
                 _state.value = _state.value.copy(
                     isLoading = false,
                     categories = cachedCategories
                 )
             }
-            val categories = recipesRepository.getCategories()
+            val categories = repository.getCategories()
             if (categories != null) {
-                recipesRepository.saveCategoriesToCache(categories)
+                repository.saveCategoriesToCache(categories)
                 _state.value = _state.value.copy(
                     isLoading = false,
                     categories = categories
@@ -49,27 +46,5 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
-
-    fun refreshCategories() {
-        loadCategories()
-    }
-
-    fun clearError() {
-        _state.value = _state.value.copy(error = null)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-    }
 }
 
-class CategoriesListViewModelFactory(private val application: Application) :
-    ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CategoriesListViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return CategoriesListViewModel(application) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}

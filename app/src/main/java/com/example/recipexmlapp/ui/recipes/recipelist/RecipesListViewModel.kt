@@ -7,16 +7,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import androidx.lifecycle.AndroidViewModel
 import android.app.Application
-import androidx.lifecycle.ViewModelProvider
 
-class RecipesListViewModel(application: Application) : AndroidViewModel(application) {
+class RecipesListViewModel(
+    private val repository: RecipesRepository,
+    private val application: Application
+) : ViewModel() {
 
     private val _state = MutableStateFlow(RecipesListState())
     val state: StateFlow<RecipesListState> = _state.asStateFlow()
-
-    private val recipesRepository = RecipesRepository
 
     fun initialize(categoryId: Int?, categoryName: String?, categoryImageUrl: String?) {
         _state.value = _state.value.copy(
@@ -33,17 +32,17 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
         val categoryId = _state.value.categoryId
         if (categoryId != null) {
             viewModelScope.launch {
-                val cachedRecipes = recipesRepository.getRecipesByCategoryFromCache(categoryId)
+                val cachedRecipes = repository.getRecipesByCategoryFromCache(categoryId)
                 if (cachedRecipes != null && cachedRecipes.isNotEmpty()) {
                     _state.value = _state.value.copy(
                         isLoading = false,
                         recipes = cachedRecipes
                     )
                 }
-                val recipes = recipesRepository.getRecipesByCategory(categoryId)
+                val recipes = repository.getRecipesByCategory(categoryId)
                 if (recipes != null) {
                     val recipesWithCategoryId = recipes.map { it.copy(categoryId = categoryId) }
-                    recipesRepository.saveRecipesToCache(recipesWithCategoryId)
+                    repository.saveRecipesToCache(recipesWithCategoryId)
                     _state.value = _state.value.copy(
                         isLoading = false,
                         recipes = recipesWithCategoryId
@@ -62,43 +61,5 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
             )
         }
     }
-
-    fun refreshRecipes() {
-        loadRecipes()
-    }
-
-    fun toggleFavorite(recipeId: Int) {
-        viewModelScope.launch {
-            val currentRecipes = _state.value.recipes
-            val recipe = currentRecipes.find { it.id == recipeId }
-            
-            if (recipe != null) {
-                if (recipe.isFavorite) {
-                    recipesRepository.removeFromFavorites(recipeId)
-                } else {
-                    recipesRepository.addToFavorites(recipeId)
-                }
-                loadRecipes()
-            }
-        }
-    }
-
-    fun clearError() {
-        _state.value = _state.value.copy(error = null)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-    }
 }
 
-class RecipesListViewModelFactory(private val application: Application) :
-    ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(RecipesListViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return RecipesListViewModel(application) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
