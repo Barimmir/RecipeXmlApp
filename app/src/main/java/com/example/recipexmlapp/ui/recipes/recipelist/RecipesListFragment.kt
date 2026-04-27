@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipexmlapp.databinding.FragmentRecipesListBinding
+import com.example.recipexmlapp.RecipeApplication
 import kotlinx.coroutines.launch
 
 class RecipesListFragment : Fragment() {
@@ -22,7 +23,8 @@ class RecipesListFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: RecipesListViewModel by viewModels {
-        RecipesListViewModelFactory(requireActivity().application)
+        val app = requireActivity().application as RecipeApplication
+        app.appContainer.recipesListViewModelFactory
     }
     private lateinit var recipesAdapter: RecipesAdapter
 

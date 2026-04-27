@@ -19,6 +19,7 @@ import com.example.recipexmlapp.adapter.MethodAdapter
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.recipexmlapp.RecipeApplication
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -40,12 +41,13 @@ class RecipeDetailFragment : Fragment() {
 
 
     private val viewModel: RecipeDetailViewModel by viewModels {
-        RecipeDetailViewModelFactory(requireActivity().application)
+        val app = requireActivity().application as RecipeApplication
+        app.appContainer.recipeViewModelFactory
     }
     private var recipeId: Int = 0
     private lateinit var ivRecipeImage: ImageView
     private lateinit var tvRecipeTitle: TextView
-        private lateinit var tvPortions: TextView
+    private lateinit var tvPortions: TextView
     private lateinit var seekBarPortions: SeekBar
     private lateinit var ibFavorite: ImageButton
     private lateinit var rvIngredients: RecyclerView
@@ -56,7 +58,7 @@ class RecipeDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         recipeId = args.recipeId
-            }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -103,36 +105,36 @@ class RecipeDetailFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.state.collect { state ->
-            state.recipe?.let { recipe ->
-                tvRecipeTitle.text = recipe.title
+                state.recipe?.let { recipe ->
+                    tvRecipeTitle.text = recipe.title
 
-                
-                state.recipeImageUrl?.let { imageUrl ->
-                    Glide.with(requireContext())
-                        .load(imageUrl)
-                        .placeholder(R.drawable.img_placeholder)
-                        .error(R.drawable.img_error)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(ivRecipeImage)
-                }
 
-                ingredientsAdapter.updateIngredients(recipe.ingredients)
-                ingredientsAdapter.updatePortions(state.portionsCount)
-                methodAdapter.updateMethod(recipe.method)
-                
-                tvPortions.text = state.portionsCount.toString()
-                seekBarPortions.progress = state.portionsCount - 1
+                    state.recipeImageUrl?.let { imageUrl ->
+                        Glide.with(requireContext())
+                            .load(imageUrl)
+                            .placeholder(R.drawable.img_placeholder)
+                            .error(R.drawable.img_error)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(ivRecipeImage)
+                    }
 
-                if (state.isFavorite) {
-                    ibFavorite.setImageResource(R.drawable.ic_heart)
-                } else {
-                    ibFavorite.setImageResource(R.drawable.ic_heart_empty)
+                    ingredientsAdapter.updateIngredients(recipe.ingredients)
+                    ingredientsAdapter.updatePortions(state.portionsCount)
+                    methodAdapter.updateMethod(recipe.method)
+
+                    tvPortions.text = state.portionsCount.toString()
+                    seekBarPortions.progress = state.portionsCount - 1
+
+                    if (state.isFavorite) {
+                        ibFavorite.setImageResource(R.drawable.ic_heart)
+                    } else {
+                        ibFavorite.setImageResource(R.drawable.ic_heart_empty)
+                    }
                 }
             }
         }
-    }
 
-    ibFavorite.setOnClickListener {
+        ibFavorite.setOnClickListener {
             viewModel.onFavoritesClicked()
         }
 

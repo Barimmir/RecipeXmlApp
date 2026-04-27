@@ -1,7 +1,5 @@
 package com.example.recipexmlapp.data
 
-import android.content.Context
-import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -11,27 +9,18 @@ import retrofit2.Retrofit
 import retrofit2.create
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
-object RecipesRepository {
-    private var appDatabase: AppDatabase? = null
-    private var categoriesDao: CategoriesDao? = null
-    private var recipesDao: RecipesDao? = null
-
-    fun initialize(context: Context) {
-        if (appDatabase == null) {
-            appDatabase = Room.databaseBuilder(
-                        context,
-                        AppDatabase::class.java, "recipe_database"
-                    ).fallbackToDestructiveMigration(false)
-                .build()
-            categoriesDao = appDatabase?.categoriesDao()
-            recipesDao = appDatabase?.recipesDao()
-        }
-    }
+class RecipesRepository(
+    private val appDatabase: AppDatabase,
+    private val categoriesDao: CategoriesDao,
+    private val recipesDao: RecipesDao,
+    private val ioDispatcher: CoroutineContext
+) {
 
     suspend fun getCategoriesFromCache(): List<Category>? {
         return try {
-            categoriesDao?.getAllCategories()
+            categoriesDao.getAllCategories()
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -40,24 +29,15 @@ object RecipesRepository {
 
     suspend fun saveCategoriesToCache(categories: List<Category>) {
         try {
-            categoriesDao?.addCategories(categories)
+            categoriesDao.addCategories(categories)
         } catch (e: Exception) {
             e.printStackTrace()
-        }
-    }
-
-    suspend fun getRecipesFromCache(): List<Recipe>? {
-        return try {
-            recipesDao?.getAllRecipes()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
     }
 
     suspend fun getRecipesByCategoryFromCache(categoryId: Int): List<Recipe>? {
         return try {
-            recipesDao?.getRecipesByCategory(categoryId)
+            recipesDao.getRecipesByCategory(categoryId)
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -66,7 +46,7 @@ object RecipesRepository {
 
     suspend fun saveRecipesToCache(recipes: List<Recipe>) {
         try {
-            recipesDao?.addRecipes(recipes)
+            recipesDao.addRecipes(recipes)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -74,7 +54,7 @@ object RecipesRepository {
 
     suspend fun getFavoriteRecipesFromCache(): List<Recipe>? {
         return try {
-            recipesDao?.getFavoriteRecipes()
+            recipesDao.getFavoriteRecipes()
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -83,7 +63,7 @@ object RecipesRepository {
 
     suspend fun addToFavorites(recipeId: Int) {
         try {
-            recipesDao?.updateFavoriteStatus(recipeId, true)
+            recipesDao.updateFavoriteStatus(recipeId, true)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -91,7 +71,7 @@ object RecipesRepository {
 
     suspend fun removeFromFavorites(recipeId: Int) {
         try {
-            recipesDao?.updateFavoriteStatus(recipeId, false)
+            recipesDao.updateFavoriteStatus(recipeId, false)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -146,22 +126,4 @@ object RecipesRepository {
             null
         }
     }
-
-
-    suspend fun getFavoriteRecipes(ids: Set<Int>): List<Recipe>? {
-        return try {
-            withContext(Dispatchers.IO) {
-                val recipes = mutableListOf<Recipe>()
-                for (id in ids) {
-                    val recipe = apiService.getRecipeById(id)
-                    recipes.add(recipe)
-                }
-                recipes
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
 }
