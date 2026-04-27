@@ -1,12 +1,5 @@
 package com.example.recipexmlapp.data
 
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.create
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
@@ -15,7 +8,8 @@ class RecipesRepository(
     private val appDatabase: AppDatabase,
     private val categoriesDao: CategoriesDao,
     private val recipesDao: RecipesDao,
-    private val ioDispatcher: CoroutineContext
+    private val ioDispatcher: CoroutineContext,
+    private val apiService: RecipeApiService
 ) {
 
     suspend fun getCategoriesFromCache(): List<Category>? {
@@ -77,23 +71,6 @@ class RecipesRepository(
         }
     }
 
-    private val json = Json { ignoreUnknownKeys = true }
-
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .build()
-
-    private val retrofit = Retrofit.Builder()
-        .client(okHttpClient)
-        .baseUrl(ApiConstants.BASE_URL)
-        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-        .build()
-
-    private val apiService = retrofit.create<RecipeApiService>()
     suspend fun getCategories(): List<Category>? {
         return try {
             withContext(Dispatchers.IO) {
