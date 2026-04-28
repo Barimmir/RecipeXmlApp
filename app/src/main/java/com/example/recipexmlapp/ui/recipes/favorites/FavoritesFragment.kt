@@ -70,9 +70,7 @@ class FavoritesFragment : Fragment() {
         if (state.isEmpty) {
             binding.rvFavorites.visibility = View.GONE
             binding.tvEmptyState.visibility = View.VISIBLE
-            if (binding.tvEmptyState.text.toString() == "Нет избранных рецептов") {
-                binding.tvEmptyState.text = "Нет избранных рецептов"
-            }
+            binding.tvEmptyState.text = "Нет избранных рецептов"
         } else {
             binding.rvFavorites.visibility = View.VISIBLE
             binding.tvEmptyState.visibility = View.GONE

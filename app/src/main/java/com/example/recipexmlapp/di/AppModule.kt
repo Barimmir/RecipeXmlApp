@@ -45,11 +45,13 @@ object AppModule {
     }
 
     @Provides
+    @Singleton
     fun provideCategoriesDao(appDatabase: AppDatabase): CategoriesDao {
         return appDatabase.categoriesDao()
     }
 
     @Provides
+    @Singleton
     fun provideRecipesDao(appDatabase: AppDatabase): RecipesDao {
         return appDatabase.recipesDao()
     }
