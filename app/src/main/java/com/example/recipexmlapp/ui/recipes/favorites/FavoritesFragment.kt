@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.recipexmlapp.R
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipexmlapp.databinding.FragmentFavoritesBinding
 import com.example.recipexmlapp.ui.recipes.recipelist.RecipesAdapter
@@ -70,7 +71,7 @@ class FavoritesFragment : Fragment() {
         if (state.isEmpty) {
             binding.rvFavorites.visibility = View.GONE
             binding.tvEmptyState.visibility = View.VISIBLE
-            binding.tvEmptyState.text = "Нет избранных рецептов"
+            binding.tvEmptyState.text = getString(R.string.empty_favorites)
         } else {
             binding.rvFavorites.visibility = View.VISIBLE
             binding.tvEmptyState.visibility = View.GONE
