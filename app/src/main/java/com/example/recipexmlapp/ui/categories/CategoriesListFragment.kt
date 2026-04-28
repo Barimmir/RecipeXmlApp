@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,18 +13,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipexmlapp.R
 import com.example.recipexmlapp.databinding.FragmentListCategoriesBinding
-import com.example.recipexmlapp.RecipeApplication
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 class CategoriesListFragment : Fragment() {
 
     private var _binding: FragmentListCategoriesBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: CategoriesListViewModel by viewModels {
-        val app = requireActivity().application as RecipeApplication
-        app.appContainer.categoriesListViewModelFactory
-    }
+    private val viewModel: CategoriesListViewModel by viewModels()
     private lateinit var categoriesAdapter: CategoriesListAdapter
 
     override fun onCreateView(
@@ -53,13 +51,21 @@ class CategoriesListFragment : Fragment() {
     }
 
     private fun updateUI(state: CategoriesListState) {
+        val recyclerView = binding.root.findViewById<RecyclerView>(R.id.rvCategories)
+        val progressBar = binding.root.findViewById<ProgressBar>(R.id.progressBar)
 
         if (state.isLoading) {
-            // Loading state
+            progressBar.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            progressBar.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
         }
 
-        state.error?.let {
-            // Error state
+        state.error?.let { errorMessage ->
+            progressBar.visibility = View.GONE
+            recyclerView.visibility = View.GONE
+            return
         }
 
         categoriesAdapter.updateCategories(state.categories)

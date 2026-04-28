@@ -7,11 +7,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import android.app.Application
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class RecipesListViewModel(
-    private val repository: RecipesRepository,
-    private val application: Application
+@HiltViewModel
+class RecipesListViewModel @Inject constructor(
+    private val repository: RecipesRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(RecipesListState())

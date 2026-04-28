@@ -5,11 +5,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
-import android.app.Application
 import kotlinx.coroutines.launch
 import com.example.recipexmlapp.data.Recipe
 import com.example.recipexmlapp.data.RecipesRepository
 import com.example.recipexmlapp.data.ApiConstants
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 data class RecipeDetailState(
     val recipe: Recipe? = null,
@@ -20,9 +21,9 @@ data class RecipeDetailState(
     val recipeImageUrl: String? = null
 )
 
-class RecipeDetailViewModel(
-    private val repository: RecipesRepository,
-    private val application: Application
+@HiltViewModel
+class RecipeDetailViewModel @Inject constructor(
+    private val repository: RecipesRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(RecipeDetailState())
@@ -41,11 +42,13 @@ class RecipeDetailViewModel(
 
             if (recipe != null) {
                 val recipeImageUrl = "${ApiConstants.IMAGE_BASE_URL}${recipe.imageUrl}"
-                val favoriteRecipes = repository.getFavoriteRecipesFromCache()
-                val isFavorite = favoriteRecipes?.any { it.id == id } ?: false
+                
+                repository.saveRecipeToCache(recipe)
+                
+                val isFavorite = repository.getRecipeFavoriteStatus(id) ?: false
 
                 _state.value = _state.value.copy(
-                    recipe = recipe,
+                    recipe = recipe.copy(isFavorite = isFavorite),
                     isFavorite = isFavorite,
                     portionsCount = currentPortionsCount,
                     isLoading = false,

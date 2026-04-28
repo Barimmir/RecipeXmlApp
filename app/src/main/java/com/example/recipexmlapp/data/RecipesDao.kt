@@ -24,4 +24,13 @@ interface RecipesDao {
 
     @Query("UPDATE recipe SET isFavorite = :isFavorite WHERE id = :recipeId")
     suspend fun updateFavoriteStatus(recipeId: Int, isFavorite: Boolean)
+
+    @Query("SELECT isFavorite FROM recipe WHERE id = :recipeId")
+    suspend fun getRecipeFavoriteStatus(recipeId: Int): Boolean?
+
+    @Query("SELECT COUNT(*) FROM recipe WHERE id = :recipeId")
+    suspend fun recipeExists(recipeId: Int): Int
+
+    @Query("UPDATE recipe SET title = :title, description = :description, ingredients = :ingredients, method = :method, imageUrl = :imageUrl, categoryId = :categoryId WHERE id = :recipeId")
+    suspend fun updateRecipeFields(recipeId: Int, title: String, description: String, ingredients: List<Ingredient>, method: List<String>, imageUrl: String, categoryId: Int)
 }

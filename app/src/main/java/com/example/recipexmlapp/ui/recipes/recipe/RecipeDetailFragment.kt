@@ -19,9 +19,9 @@ import com.example.recipexmlapp.adapter.MethodAdapter
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.recipexmlapp.RecipeApplication
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 class PortionSeekBarListener(val onChangeIngredients: (Int) -> Unit) : OnSeekBarChangeListener {
@@ -35,15 +35,13 @@ class PortionSeekBarListener(val onChangeIngredients: (Int) -> Unit) : OnSeekBar
     override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 }
 
+@AndroidEntryPoint
 class RecipeDetailFragment : Fragment() {
 
     private val args: RecipeDetailFragmentArgs by navArgs()
 
 
-    private val viewModel: RecipeDetailViewModel by viewModels {
-        val app = requireActivity().application as RecipeApplication
-        app.appContainer.recipeViewModelFactory
-    }
+    private val viewModel: RecipeDetailViewModel by viewModels()
     private var recipeId: Int = 0
     private lateinit var ivRecipeImage: ImageView
     private lateinit var tvRecipeTitle: TextView

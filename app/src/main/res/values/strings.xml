@@ -12,4 +12,7 @@
     <string name="ingredient_quantity_format">%s %s</string>
     <string name="add_to_favorites">Добавить в избранное</string>
     <string name="step_number_format">%d.</string>
+    <string name="recipe_title_format">Recipe: %s</string>
+    <string name="recipe_not_found">Recipe not found</string>
+    <string name="empty_favorites">Нет избранных рецептов</string>
 </resources>

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,9 +13,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipexmlapp.databinding.FragmentRecipesListBinding
-import com.example.recipexmlapp.RecipeApplication
+import com.example.recipexmlapp.R
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 class RecipesListFragment : Fragment() {
 
     private val args: RecipesListFragmentArgs by navArgs()
@@ -22,10 +24,7 @@ class RecipesListFragment : Fragment() {
     private var _binding: FragmentRecipesListBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: RecipesListViewModel by viewModels {
-        val app = requireActivity().application as RecipeApplication
-        app.appContainer.recipesListViewModelFactory
-    }
+    private val viewModel: RecipesListViewModel by viewModels()
     private lateinit var recipesAdapter: RecipesAdapter
 
     override fun onCreateView(
@@ -57,10 +56,21 @@ class RecipesListFragment : Fragment() {
     private fun updateUI(state: RecipesListState) {
         setupHeader(state.categoryName, state.categoryImageUrl)
         
+        val progressBar = binding.root.findViewById<ProgressBar>(R.id.progressBar)
+        val recyclerView = binding.rvRecipes
+        
         if (state.isLoading) {
+            progressBar.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            progressBar.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
         }
         
-        state.error?.let {
+        state.error?.let { errorMessage ->
+            progressBar.visibility = View.GONE
+            recyclerView.visibility = View.GONE
+            return
         }
         
         recipesAdapter.updateRecipes(state.recipes)
