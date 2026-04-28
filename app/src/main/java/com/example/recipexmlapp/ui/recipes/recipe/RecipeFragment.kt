@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.recipexmlapp.data.Recipe
+import com.example.recipexmlapp.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RecipeFragment : Fragment() {
     
     override fun onCreateView(
@@ -29,9 +32,9 @@ class RecipeFragment : Fragment() {
         val textView = view as TextView
         
         recipe?.let {
-            textView.text = "Recipe: ${it.title}"
+            textView.text = getString(R.string.recipe_title_format, it.title)
         } ?: run {
-            textView.text = "Recipe not found"
+            textView.text = getString(R.string.recipe_not_found)
         }
     }
     

@@ -1,17 +1,18 @@
 package com.example.recipexmlapp.ui.recipes.favorites
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.recipexmlapp.data.RecipesRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FavoritesViewModel(
-    private val repository: RecipesRepository,
-    private val application: Application
+@HiltViewModel
+class FavoritesViewModel @Inject constructor(
+    private val repository: RecipesRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(FavoritesState())

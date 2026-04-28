@@ -3,6 +3,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.kotlin.serialization)
     id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -71,4 +72,6 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 }

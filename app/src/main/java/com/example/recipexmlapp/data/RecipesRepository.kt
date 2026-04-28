@@ -40,7 +40,21 @@ class RecipesRepository(
 
     suspend fun saveRecipesToCache(recipes: List<Recipe>) {
         try {
-            recipesDao.addRecipes(recipes)
+            val recipesWithFavoriteStatus = recipes.map { recipe ->
+                val currentFavoriteStatus = getRecipeFavoriteStatus(recipe.id)
+                recipe.copy(isFavorite = currentFavoriteStatus ?: false)
+            }
+            recipesDao.addRecipes(recipesWithFavoriteStatus)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun saveRecipeToCache(recipe: Recipe) {
+        try {
+            val currentFavoriteStatus = getRecipeFavoriteStatus(recipe.id)
+            val recipeToSave = recipe.copy(isFavorite = currentFavoriteStatus ?: false)
+            recipesDao.addRecipe(recipeToSave)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -68,6 +82,15 @@ class RecipesRepository(
             recipesDao.updateFavoriteStatus(recipeId, false)
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    suspend fun getRecipeFavoriteStatus(recipeId: Int): Boolean? {
+        return try {
+            recipesDao.getRecipeFavoriteStatus(recipeId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
